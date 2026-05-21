@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cost Calculator by Jackbakeryman | เครื่องคำนวณต้นทุน & ราคาขาย</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* =====================================================================
+   * THEME: Modern · Clean · Soft  (สะอาดตา ทันสมัย สมยุค AI)
+   * ================================================================== */
+  :root{
+    --bg:#FBFAFC;
+    --paper:#FFFFFF;
+    --ink:#1C1B22;
+    --ink-soft:#6E6B7B;
+    --ink-faint:#A8A5B5;
+    --line:#EEECF3;
+    --line-mid:#E2DFEA;
+    --brand:#6D5BF6;          /* ม่วง-น้ำเงินสดใส */
+    --brand-2:#9B6BF6;
+    --brand-soft:#F1EEFE;
+    --accent:#FF5C8A;         /* ชมพูพีช สดใส */
+    --accent-soft:#FFEEF3;
+    --green:#15B886;
+    --green-soft:#E6F8F1;
+    --amber:#F5A524;
+    --radius:20px;
+    --radius-sm:13px;
+    --radius-xs:10px;
+    --shadow:0 10px 30px -12px rgba(80,70,140,.22);
+    --shadow-sm:0 4px 16px -6px rgba(80,70,140,.16);
+    --shadow-hover:0 16px 38px -12px rgba(109,91,246,.34);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'IBM Plex Sans Thai',sans-serif;color:var(--ink);
+    background:
+      radial-gradient(900px 500px at 12% -5%, rgba(109,91,246,.10), transparent 60%),
+      radial-gradient(800px 500px at 100% 0%, rgba(255,92,138,.08), transparent 55%),
+      var(--bg);
+    min-height:100vh;padding:30px 16px 72px;line-height:1.6;-webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1000px;margin:0 auto}
+  h1,h2,h3,.font-head{font-family:'Archivo',sans-serif;letter-spacing:-.02em}
+
+  /* ---------- Header / brand ---------- */
+  header{text-align:center;margin-bottom:34px}
+  .logo-badge{
+    display:inline-flex;align-items:center;gap:11px;
+    background:var(--paper);padding:7px 18px 7px 7px;border-radius:50px;
+    box-shadow:var(--shadow-sm);margin-bottom:20px;border:1px solid var(--line);
+  }
+  .logo-emoji{
+    width:42px;height:42px;border-radius:50%;overflow:hidden;
+    background:var(--brand-soft);display:flex;align-items:center;justify-content:center;font-size:22px;
+  }
+  .logo-emoji img{width:100%;height:100%;object-fit:cover;display:block}
+  .brand-name{font-family:'Archivo';font-weight:700;font-size:1rem;
+    background:linear-gradient(100deg,var(--brand),var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent}
+  h1{font-size:2.05rem;font-weight:800;line-height:1.1;
+    background:linear-gradient(100deg,var(--brand) 10%,var(--brand-2) 45%,var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .subtitle{color:var(--ink-soft);font-size:.96rem;margin-top:9px}
+
+  .lang-toggle{display:inline-flex;border-radius:50px;background:var(--paper);margin-top:18px;padding:4px;box-shadow:var(--shadow-sm);border:1px solid var(--line)}
+  .lang-toggle button{
+    border:none;background:transparent;font-family:'Archivo';font-weight:700;border-radius:50px;
+    padding:6px 18px;cursor:pointer;color:var(--ink-soft);font-size:.85rem;transition:.18s;
+  }
+  .lang-toggle button.active{background:linear-gradient(100deg,var(--brand),var(--brand-2));color:#fff;box-shadow:0 4px 12px -3px rgba(109,91,246,.5)}
+
+  /* ---------- Cards ---------- */
+  .card{
+    background:var(--paper);border-radius:var(--radius);padding:28px;margin-bottom:22px;
+    box-shadow:var(--shadow);border:1px solid var(--line);
+  }
+  .card-head{display:flex;align-items:center;gap:13px;margin-bottom:6px}
+  .card-icon{
+    width:44px;height:44px;border-radius:14px;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;font-size:21px;
+  }
+  .ic-a{background:var(--accent-soft)} .ic-b{background:var(--brand-soft)} .ic-d{background:var(--green-soft)}
+  h2{font-size:1.28rem;font-weight:700;color:#2D2A4A}
+  .card-desc{color:var(--ink-soft);font-size:.89rem;margin-bottom:22px}
+
+  /* ---------- Form ---------- */
+  label{display:block;font-family:'IBM Plex Sans Thai';font-weight:600;font-size:.82rem;color:var(--ink-soft);margin-bottom:7px}
+  input,select{
+    width:100%;font-family:'IBM Plex Sans Thai';font-size:.94rem;color:var(--ink);
+    padding:11px 14px;border:1.5px solid var(--line-mid);border-radius:var(--radius-xs);
+    background:var(--paper);transition:.18s;outline:none;
+  }
+  input:focus,select:focus{border-color:var(--brand);box-shadow:0 0 0 4px var(--brand-soft)}
+  input::placeholder{color:var(--ink-faint)}
+
+  .grid{display:grid;gap:15px}
+  .form-a{grid-template-columns:1.6fr 1fr 1fr 1.3fr 1.3fr auto;align-items:end}
+  .form-bc{grid-template-columns:1.6fr 1fr 1fr 1fr;margin-bottom:18px;align-items:end}
+  .form-bc5{grid-template-columns:1.5fr 1fr 1fr 1fr 1fr;margin-bottom:18px;align-items:end}
+  .form-bc5>div,.form-bc>div{display:flex;flex-direction:column;justify-content:flex-end;height:100%}
+  .form-bc5>div label,.form-bc>div label{flex:1 0 auto;display:flex;align-items:flex-end}
+  @media(max-width:760px){.form-bc5{grid-template-columns:1fr 1fr}}
+  @media(max-width:480px){.form-bc5{grid-template-columns:1fr}}
+  .edit-banner{display:flex;align-items:center;gap:8px;background:var(--brand-soft);border:1px solid var(--line-mid);
+    border-radius:var(--radius-xs);padding:11px 15px;margin-bottom:18px;font-weight:600;font-size:.88rem;color:var(--brand)}
+  .prow{cursor:pointer}
+  .prow:hover{background:var(--brand-soft)!important}
+  @media(max-width:760px){.form-a,.form-bc{grid-template-columns:1fr 1fr}}
+  @media(max-width:480px){.form-a,.form-bc{grid-template-columns:1fr}}
+
+  button.btn{
+    font-family:'Archivo';font-weight:700;font-size:.92rem;cursor:pointer;
+    padding:12px 24px;border:none;border-radius:var(--radius-xs);transition:.18s;color:#fff;
+    background:linear-gradient(100deg,var(--brand),var(--brand-2));box-shadow:0 8px 20px -7px rgba(109,91,246,.6);
+  }
+  button.btn:hover{transform:translateY(-2px);box-shadow:0 13px 26px -8px rgba(109,91,246,.7)}
+  button.btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+  button.btn-mint{background:linear-gradient(100deg,var(--green),#0EA372);box-shadow:0 8px 20px -7px rgba(21,184,134,.55)}
+  button.btn-mint:hover{box-shadow:0 13px 26px -8px rgba(21,184,134,.65)}
+  button.ghost{
+    font-family:'IBM Plex Sans Thai';font-weight:600;font-size:.84rem;cursor:pointer;background:var(--paper);
+    color:var(--ink-soft);border:1.5px solid var(--line-mid);border-radius:var(--radius-xs);padding:7px 14px;transition:.15s;
+  }
+  button.ghost:hover{border-color:var(--brand);color:var(--brand);background:var(--brand-soft)}
+  button.x{background:var(--accent-soft);border:none;border-radius:var(--radius-xs);width:36px;height:36px;cursor:pointer;color:var(--accent);font-weight:700;font-size:1rem;transition:.15s}
+  button.x:hover{background:var(--accent);color:#fff}
+
+  /* ---------- Tables ---------- */
+  .table-wrap{overflow-x:auto;margin-top:8px}
+  table{width:100%;border-collapse:collapse;font-size:.9rem}
+  th{font-family:'IBM Plex Sans Thai';font-weight:600;color:var(--ink-faint);text-align:left;padding:11px 13px;font-size:.78rem}
+  td{padding:13px;border-top:1px solid var(--line)}
+  .num{font-variant-numeric:tabular-nums;text-align:right;font-weight:600}
+  .mini-input{width:62px;padding:6px 8px;text-align:center;font-weight:700;border-radius:var(--radius-xs)}
+  .empty{text-align:center;color:var(--ink-faint);padding:30px}
+  .price{color:var(--accent);font-weight:700}
+  .profit{color:var(--green);font-weight:700}
+  .warn{color:var(--accent);font-size:.78rem;font-weight:700}
+
+  /* ---------- Recipe lines ---------- */
+  .line{display:grid;grid-template-columns:1fr 130px 90px 40px;gap:10px;align-items:center;margin-bottom:9px}
+  @media(max-width:480px){.line{grid-template-columns:1fr 1fr;}.line .lc{grid-column:1/-1;text-align:left}}
+  .qty-wrap{position:relative}
+  .qty-wrap span{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:.74rem;color:var(--ink-faint);pointer-events:none}
+  .lc{text-align:right;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums}
+
+  .total-bar{display:flex;justify-content:space-between;align-items:center;margin-top:18px;
+    background:linear-gradient(115deg,var(--brand),var(--brand-2) 55%,var(--accent));border-radius:var(--radius-sm);padding:18px 20px}
+  .total-bar .lbl{font-family:'IBM Plex Sans Thai';font-weight:600;color:rgba(255,255,255,.85);font-size:.85rem}
+  .total-bar .val{font-family:'Archivo';font-weight:700;font-size:1.3rem;color:#fff}
+  .total-bar2{flex-direction:column;align-items:stretch;gap:13px}
+  .total-bar2 .tb-batch{display:flex;justify-content:space-between;align-items:center;padding-bottom:13px;border-bottom:1px solid rgba(255,255,255,.25)}
+  .total-bar2 .val-sm{font-family:'Archivo';font-weight:600;font-size:1.02rem;color:#fff}
+  .total-bar2 .tb-per{display:flex;justify-content:space-between;align-items:center}
+  .total-bar2 .tb-per .lbl{font-size:.9rem;color:rgba(255,255,255,.92);font-weight:600}
+  .total-bar2 .val-big{font-family:'Archivo';font-weight:800;font-size:2.15rem;color:#fff;line-height:1}
+
+  /* ---------- Follow / footer ---------- */
+  .follow{text-align:center;margin-top:32px;border-radius:var(--radius);padding:34px 28px;
+    background:linear-gradient(140deg,var(--brand-soft),var(--accent-soft));border:1px solid var(--line)}
+  .follow h3{font-size:1.18rem;margin-bottom:8px;
+    background:linear-gradient(100deg,var(--brand),var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent;display:inline-block}
+  .follow p{color:var(--ink-soft);font-size:.9rem;margin-bottom:18px}
+  .follow-links{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .follow-links a{
+    font-family:'Archivo';font-weight:700;text-decoration:none;font-size:.88rem;color:#fff;
+    padding:11px 24px;border-radius:50px;transition:.18s;display:inline-flex;align-items:center;gap:7px;
+  }
+  .fl-tiktok{background:var(--ink);box-shadow:var(--shadow-sm)}
+  .fl-page{background:linear-gradient(100deg,var(--brand),var(--accent));box-shadow:0 8px 20px -7px rgba(109,91,246,.5)}
+  .follow-links a:hover{transform:translateY(-3px)}
+  .formula-note{text-align:center;color:var(--ink-faint);font-size:.78rem;margin-top:24px;line-height:1.9}
+  .saved-tag{font-size:.74rem;color:var(--green);font-weight:700;margin-left:6px}
+
+  /* ---------- QR in header ---------- */
+  .qr-box{
+    display:inline-flex;flex-direction:column;align-items:center;gap:8px;
+    background:var(--paper);padding:14px 16px;border-radius:var(--radius-sm);box-shadow:var(--shadow-sm);border:1px solid var(--line);margin-top:18px;
+  }
+  .qr-box canvas{border-radius:8px;display:block}
+  .qr-box .cap{font-family:'IBM Plex Sans Thai';font-weight:600;font-size:.74rem;color:var(--ink-soft)}
+  .head-row{display:flex;gap:18px;justify-content:center;align-items:center;flex-wrap:wrap}
+
+  /* ---------- Share toast ---------- */
+  .toast{
+    position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);
+    background:var(--ink);color:#fff;padding:14px 24px;border-radius:50px;
+    font-family:'IBM Plex Sans Thai';font-weight:600;font-size:.9rem;box-shadow:0 12px 30px -8px rgba(0,0,0,.4);
+    opacity:0;pointer-events:none;transition:.3s;z-index:200;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  /* ---------- Follow popup ---------- */
+  .overlay{position:fixed;inset:0;background:rgba(28,27,34,.5);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:300;padding:20px}
+  .overlay.show{display:flex;animation:fade .25s ease}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  .popup{
+    background:var(--paper);border-radius:var(--radius);padding:34px 28px;max-width:380px;width:100%;text-align:center;
+    box-shadow:0 30px 60px -15px rgba(80,70,140,.4);animation:pop .35s cubic-bezier(.18,.89,.32,1.28);
+  }
+  @keyframes pop{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+  .popup .pe{font-size:2.8rem;margin-bottom:10px}
+  .popup h3{font-size:1.2rem;color:var(--ink);margin-bottom:10px}
+  .popup p{color:var(--ink-soft);font-size:.9rem;margin-bottom:22px}
+  .popup .pbtns{display:flex;gap:11px;flex-direction:column}
+  .popup .pbtns a{
+    font-family:'Archivo';font-weight:700;text-decoration:none;font-size:.93rem;color:#fff;
+    padding:13px;border-radius:var(--radius-xs);background:linear-gradient(100deg,var(--brand),var(--brand-2));box-shadow:0 8px 20px -7px rgba(109,91,246,.5);transition:.18s;
+  }
+  .popup .pbtns a:hover{transform:translateY(-2px)}
+  .popup .pbtns button{
+    font-family:'IBM Plex Sans Thai';font-weight:600;font-size:.85rem;background:none;border:none;
+    color:var(--ink-soft);cursor:pointer;padding:6px;text-decoration:underline;
+  }
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+
+<script>
+/* =========================================================================
+ * BRAND CONFIG — ★ แก้ของคุณตรงนี้จุดเดียว ★
+ * ====================================================================== */
+const BRAND = {
+  pageName: "พี่แจ็ค เบเกอรี่แมน",                      // ชื่อเพจ
+  emoji: "🧁",                                          // อิโมจิโลโก้ (ใช้เมื่อไม่มี logoUrl หรือรูปโหลดไม่ขึ้น)
+  logoUrl: "data:image/png;base64,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", // โลโก้ Mr.Jack (ฝังในไฟล์ ใช้ออฟไลน์ได้)
+  pageUrl: "https://facebook.com/Mr.JackBakeryCoffee", // ลิงก์เพจ
+  tiktokUrl: "https://www.tiktok.com/@jackbakeryman",  // ลิงก์ TikTok
+  tiktokHandle: "@jackbakeryman",
+};
+
+/* QR matrix ของลิงก์เพจ (สร้างไว้ล่วงหน้า ไม่ต้องพึ่งเน็ต) */
+const QR_MATRIX=["11111110110001100100001111111", "10000010110100001111001000001", "10111010110111000011101011101", "10111010010101011111101011101", "10111010111000101010001011101", "10000010001001100000101000001", "11111110101010101010101111111", "00000000010001110010000000000", "10011111110000111000010010111", "10011000010010100111100110110", "11101010110010011010010010100", "00111000110110101110100011001", "11010110100110000000101100001", "01110100011111111010001111111", "11011110001011111011100100101", "10000001111100011001010010101", "00001110101010111001100101000", "10001100001001010111100010110", "11100010100100010011000011001", "11111001001110101000111011100", "11001010000101111101111111110", "00000000101110110110100011000", "11111110111010111011101011000", "10000010101010111101100010001", "10111010100001101101111111010", "10111010100111011011010000001", "10111010011111010110110110111", "10000010000110101010000001101", "11111110111011010000101010000"];
+
+/* =========================================================================
+ * i18n — ข้อความ 2 ภาษา
+ * ====================================================================== */
+const STR = {
+  appTitle:{th:"เครื่องคำนวณต้นทุน & ราคาขาย",en:"Cost & Price Calculator"},
+  subtitle:{th:"คำนวณต้นทุนวัตถุดิบ ตั้งราคาขาย และดูกำไรสุทธิ แบบง่าย ๆ",en:"Calculate ingredient cost, set prices, and see net profit easily"},
+  secA:{th:"ตั้งค่าวัตถุดิบ",en:"Ingredient Setup"},
+  secA_d:{th:"เพิ่มวัตถุดิบที่ซื้อมา ระบบจะคิดต้นทุนต่อหน่วยย่อยให้อัตโนมัติ",en:"Add raw materials; cost per base unit is computed automatically."},
+  secB:{th:"สร้างสูตรสินค้า + ตั้งกำไร",en:"Build Product + Margin"},
+  secB_d:{th:"เลือกวัตถุดิบใส่ในสูตร แล้วกำหนดค่า GP และกำไรที่อยากได้",en:"Pick ingredients, then set GP fee and desired margin."},
+  secD:{th:"สรุปราคาขาย & กำไร",en:"Price & Profit Summary"},
+  secD_d:{th:"ราคาขายและกำไรคำนวณต่อชิ้นให้อัตโนมัติ คลิกที่แถวเพื่อแก้ไขสูตร",en:"Price & profit per piece, auto-calculated. Click a row to edit."},
+  f_name:{th:"ชื่อวัตถุดิบ",en:"Name"},
+  f_price:{th:"ราคาที่ซื้อ (฿)",en:"Price (฿)"},
+  f_qty:{th:"ปริมาณ",en:"Qty"},
+  f_pUnit:{th:"หน่วยที่ซื้อ",en:"Bought in"},
+  f_bUnit:{th:"หน่วยในสูตร",en:"Recipe unit"},
+  add:{th:"เพิ่ม",en:"Add"},
+  th_ing:{th:"วัตถุดิบ",en:"Ingredient"},
+  th_buy:{th:"ที่ซื้อ",en:"Purchase"},
+  th_cpu:{th:"ต้นทุน/หน่วย",en:"Cost/unit"},
+  noIng:{th:"ยังไม่มีวัตถุดิบ ลองเพิ่มดูสิ! 🍓",en:"No ingredients yet 🍓"},
+  remove:{th:"ลบ",en:"Remove"},
+  f_pName:{th:"ชื่อสินค้า",en:"Product name"},
+  f_gp:{th:"ค่า GP %",en:"GP fee %"},
+  f_margin:{th:"กำไรที่ต้องการ % (ของต้นทุน)",en:"Profit % (of cost)"},
+  f_yield:{th:"จำนวนชิ้นต่อสูตร",en:"Pieces per batch"},
+  f_pack:{th:"ค่าบรรจุภัณฑ์/ชิ้น (฿)",en:"Packaging/pc (฿)"},
+  perPieceLabel:{th:"ต้นทุน/ชิ้น (รวมแพ็คเกจจิ้ง)",en:"Cost/pc (incl. packaging)"},
+  f_qtyUsed:{th:"จำนวนที่ใช้",en:"Qty used"},
+  th_pack:{th:"บรรจุภัณฑ์/ชิ้น",en:"Pack/pc"},
+  editHint:{th:"💡 คลิกที่แถวสินค้าเพื่อแก้ไขสูตร",en:"💡 Click a row to edit"},
+  editing:{th:"✏️ กำลังแก้ไข:",en:"✏️ Editing:"},
+  updateBtn:{th:"💾 อัปเดตสินค้า",en:"💾 Update product"},
+  cancelEdit:{th:"ยกเลิก",en:"Cancel"},
+  l_ingredient:{th:"วัตถุดิบ",en:"Ingredient"},
+  addLine:{th:"+ เพิ่มวัตถุดิบในสูตร",en:"+ Add ingredient"},
+  running:{th:"ต้นทุนรวมตอนนี้",en:"Running total"},
+  save:{th:"💾 บันทึกสินค้า",en:"💾 Save product"},
+  addFirst:{th:"เพิ่มวัตถุดิบในส่วนแรกก่อนนะ",en:"Add ingredients first"},
+  qty:{th:"จำนวน",en:"Qty"},
+  th_prod:{th:"สินค้า",en:"Product"},
+  th_cost:{th:"ต้นทุน/ชิ้น",en:"Cost/pc"},
+  th_price:{th:"💰 ราคาแนะนำให้ขาย/ชิ้น",en:"💰 Suggested price/pc"},
+  th_profit:{th:"กำไร/ชิ้น",en:"Profit/pc"},
+  th_yield:{th:"ชิ้น/สูตร",en:"Pcs"},
+  noProd:{th:"ยังไม่มีสินค้า สร้างสูตรแรกกันเลย! 🎂",en:"No products yet 🎂"},
+  warn:{th:"GP ≥ 100%",en:"GP ≥ 100%"},
+  followH:{th:"ถ้าชอบเครื่องมือนี้ ฝากติดตามด้วยนะครับ 💕",en:"Like this tool? Follow us 💕"},
+  followP:{th:"มีสูตร เทคนิค และของแจกฟรีอีกเพียบ!",en:"More recipes, tips & freebies!"},
+  saved:{th:"บันทึกอัตโนมัติ ✓",en:"Auto-saved ✓"},
+  scanFollow:{th:"สแกนติดตามเพจ",en:"Scan to follow"},
+  share:{th:"📤 แชร์ให้เพื่อน",en:"📤 Share with friends"},
+  shareCopied:{th:"คัดลอกลิงก์แล้ว! เอาไปวางส่งเพื่อนได้เลย 💕",en:"Link copied! Paste & share 💕"},
+  shareText:{th:"เจอเครื่องคำนวณต้นทุน-ราคาขายฟรีจากเพจ พี่แจ็ค เบเกอรี่แมน ลองใช้ดูสิ 🧁",en:"Free cost & pricing calculator from พี่แจ็ค เบเกอรี่แมน — try it! 🧁"},
+  popTitle:{th:"เก่งมาก! บันทึกสินค้าชิ้นแรกแล้ว 🎉",en:"Nice! First product saved 🎉"},
+  popBody:{th:"ถ้าเครื่องมือนี้มีประโยชน์ ฝากกดติดตามพี่แจ็คด้วยนะครับ มีสูตรและทริคต้นทุนอีกเพียบ!",en:"If this helped, follow พี่แจ็ค for more recipes & cost tips!"},
+  popFollow:{th:"ติดตามเลย",en:"Follow now"},
+  popLater:{th:"ไว้ทีหลัง",en:"Maybe later"},
+  s_flour:{th:"แป้งสาลี",en:"Wheat Flour"},
+  s_sugar:{th:"น้ำตาล",en:"Sugar"},
+  s_butter:{th:"เนย",en:"Butter"},
+};
+const UNIT_LABELS={
+  kg:{th:"กิโลกรัม (kg)",en:"Kilogram (kg)"},g:{th:"กรัม (g)",en:"Gram (g)"},
+  l:{th:"ลิตร (L)",en:"Liter (L)"},ml:{th:"มิลลิลิตร (ml)",en:"Milliliter (ml)"},
+  piece:{th:"ชิ้น (pc)",en:"Piece (pc)"},
+  egg:{th:"ฟอง",en:"Egg"},
+};
+const UNITS={kg:{dim:"mass",f:1000},g:{dim:"mass",f:1},l:{dim:"vol",f:1000},ml:{dim:"vol",f:1},piece:{dim:"count",f:1},egg:{dim:"egg",f:1}};
+const UKEYS=Object.keys(UNITS);
+
+/* =========================================================================
+ * CALCULATION LOGIC — pure functions
+ * ====================================================================== */
+function convert(amt,from,to){const a=UNITS[from],b=UNITS[to];if(!a||!b||a.dim!==b.dim)return null;return amt*a.f/b.f;}
+function costPerBaseUnit(ing){
+  if(!ing.purchaseQuantity||ing.purchaseQuantity<=0)return 0;
+  const q=convert(ing.purchaseQuantity,ing.purchaseUnit,ing.baseUnit)??ing.purchaseQuantity;
+  return q>0?ing.purchasePrice/q:0;
+}
+function totalProductCost(prod,byId){
+  return prod.ingredients.reduce((s,l)=>{const ing=byId[l.ingredientId];return ing?s+l.quantityUsed*costPerBaseUnit(ing):s;},0);
+}
+/* กำไร% คิดจาก "ต้นทุน" (แบบแม่ค้า): กำไรที่อยากได้ = ต้นทุน × กำไร%
+ * GP เป็นค่าธรรมเนียมแพลตฟอร์มที่หักจากราคาขาย
+ * ราคาขาย = (ต้นทุน + กำไรที่อยากได้) ÷ (1 − GP%)  */
+function suggestedPrice(cost,gp,margin){
+  const d=1-gp/100;
+  if(d<=0)return Infinity;            // GP ≥ 100% ขายไม่ได้
+  return (cost+cost*margin/100)/d;
+}
+/* กำไรสุทธิต่อชิ้น = ราคาขาย − ต้นทุน − ค่า GP (ควรเท่ากับ ต้นทุน × กำไร%) */
+function netProfit(price,cost,gp){return!isFinite(price)?Infinity:price-cost-price*(gp/100);}
+
+/* =========================================================================
+ * STATE + PERSISTENCE (localStorage — ข้อมูลเก็บในเครื่องผู้ใช้)
+ * ====================================================================== */
+const KEY="costcalc_v1";
+const uid=()=>Math.random().toString(36).slice(2,10);
+let lang="th";
+let state={
+  ingredients:[
+    {id:uid(),nameKey:"s_flour",name:"",purchasePrice:100,purchaseQuantity:1,purchaseUnit:"kg",baseUnit:"g"},
+    {id:uid(),nameKey:"s_sugar",name:"",purchasePrice:45,purchaseQuantity:1,purchaseUnit:"kg",baseUnit:"g"},
+    {id:uid(),nameKey:"s_butter",name:"",purchasePrice:180,purchaseQuantity:1,purchaseUnit:"kg",baseUnit:"g"},
+  ],
+  products:[],
+  draft:{name:"",lines:[],gp:"",margin:"",yield:"",pack:""},
+  editingId:null,
+};
+function load(){try{const r=localStorage.getItem(KEY);if(r){const d=JSON.parse(r);state.ingredients=d.ingredients||state.ingredients;state.products=(d.products||[]).map(p=>({yieldCount:1,packCost:0,...p}));}}catch(e){}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify({ingredients:state.ingredients,products:state.products}));}catch(e){}}
+
+/* helpers */
+const t=k=>STR[k]?STR[k][lang]:k;
+const tu=k=>UNIT_LABELS[k]?UNIT_LABELS[k][lang]:k;
+const ingName=ing=>ing.nameKey?t(ing.nameKey):(ing.name||"");
+const baht=n=>isFinite(n)?new Intl.NumberFormat("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}).format(n):"—";
+const byId=()=>Object.fromEntries(state.ingredients.map(i=>[i.id,i]));
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+/* แสดงโลโก้แบรนด์: ถ้ามี logoUrl ใช้รูป (fallback เป็น emoji), size = px */
+const brandMark=(size)=>BRAND.logoUrl
+  ? `<img src="${BRAND.logoUrl}" alt="logo" style="width:${size}px;height:${size}px;border-radius:50%;object-fit:cover;display:inline-block;vertical-align:middle" onerror="this.outerHTML='${BRAND.emoji}'">`
+  : BRAND.emoji;
+/* SVG ไอคอน Facebook (สีขาว ใช้บนปุ่ม) */
+const FB_ICON='<svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor" style="vertical-align:-3px"><path d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.69 4.53-4.69 1.31 0 2.68.24 2.68.24v2.97h-1.5c-1.49 0-1.96.93-1.96 1.89v2.25h3.33l-.53 3.49h-2.8V24C19.61 23.1 24 18.1 24 12.07z"/></svg>';
+
+/* =========================================================================
+ * RENDER
+ * ====================================================================== */
+function render(){
+  const map=byId();
+  document.getElementById("app").innerHTML=`
+  <header>
+    <div class="logo-badge">
+      <div class="logo-emoji">${BRAND.logoUrl?`<img src="${BRAND.logoUrl}" alt="logo" onerror="this.parentNode.textContent='${BRAND.emoji}'">`:BRAND.emoji}</div>
+      <div class="brand-name">${esc(BRAND.pageName)}</div>
+    </div>
+    <h1>${t("appTitle")}</h1>
+    <p class="subtitle">${t("subtitle")}<span class="saved-tag">${t("saved")}</span></p>
+    <div class="lang-toggle">
+      <button class="${lang==="th"?"active":""}" onclick="setLang('th')">ไทย</button>
+      <button class="${lang==="en"?"active":""}" onclick="setLang('en')">EN</button>
+    </div>
+    <div class="head-row">
+      <a class="qr-box" href="${BRAND.pageUrl}" target="_blank" rel="noopener" style="text-decoration:none">
+        <canvas id="qrCanvas" width="116" height="116"></canvas>
+        <span class="cap">${t("scanFollow")} ${BRAND.emoji}</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- SECTION A -->
+  <div class="card">
+    <div class="card-head"><div class="card-icon ic-a">🍓</div><h2>${t("secA")}</h2></div>
+    <p class="card-desc">${t("secA_d")}</p>
+    <div class="grid form-a">
+      <div><label>${t("f_name")}</label><input id="ia_name" placeholder="${lang==='th'?'เช่น แป้งเค้ก':'e.g. Cake Flour'}"></div>
+      <div><label>${t("f_price")}</label><input id="ia_price" type="number" min="0" placeholder="100"></div>
+      <div><label>${t("f_qty")}</label><input id="ia_qty" type="number" min="0" placeholder="1"></div>
+      <div><label>${t("f_pUnit")}</label><select id="ia_pu" onchange="syncBaseUnit()">${UKEYS.map(k=>`<option value="${k}">${tu(k)}</option>`).join("")}</select></div>
+      <div><label>${t("f_bUnit")}</label><select id="ia_bu">${UKEYS.map(k=>`<option value="${k}">${tu(k)}</option>`).join("")}</select></div>
+      <div><button class="btn" onclick="addIngredient()">${t("add")}</button></div>
+    </div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>${t("th_ing")}</th><th>${t("th_buy")}</th><th style="text-align:right">${t("th_cpu")}</th><th></th></tr></thead>
+      <tbody>${state.ingredients.length?state.ingredients.map(ing=>`
+        <tr>
+          <td style="font-weight:600">${esc(ingName(ing))}</td>
+          <td style="color:var(--ink-soft)">฿${baht(ing.purchasePrice)} / ${ing.purchaseQuantity} ${ing.purchaseUnit}</td>
+          <td class="num">฿${baht(costPerBaseUnit(ing))} <span style="color:#C9B8AE;font-weight:400">/ ${ing.baseUnit}</span></td>
+          <td style="text-align:right"><button class="ghost" onclick="removeIngredient('${ing.id}')">${t("remove")}</button></td>
+        </tr>`).join(""):`<tr><td colspan="4" class="empty">${t("noIng")}</td></tr>`}</tbody>
+    </table></div>
+  </div>
+
+  <!-- SECTION B & C -->
+  <div class="card" id="builderCard">
+    <div class="card-head"><div class="card-icon ic-b">🧁</div><h2>${t("secB")}</h2></div>
+    <p class="card-desc">${t("secB_d")}</p>
+    ${state.editingId?`<div class="edit-banner">${t("editing")} <b>${esc(state.draft.name)}</b><button class="ghost" onclick="cancelEdit()" style="margin-left:auto">${t("cancelEdit")}</button></div>`:""}
+    <div class="grid form-bc5">
+      <div><label>${t("f_pName")}</label><input id="pb_name" value="${esc(state.draft.name)}" oninput="draftSet('name',this.value)" placeholder="${lang==='th'?'เช่น คุกกี้เนยสด':'e.g. Butter Cookie'}"></div>
+      <div><label>${t("f_yield")} 🍪</label><input id="pb_yield" type="number" min="1" value="${state.draft.yield}" oninput="draftYield(this.value)" placeholder="${lang==='th'?'เช่น 12':'e.g. 12'}"></div>
+      <div><label>${t("f_pack")} 📦</label><input id="pb_pack" type="number" min="0" value="${state.draft.pack}" oninput="draftPack(this.value)" placeholder="0"></div>
+      <div><label>${t("f_gp")}</label><input id="pb_gp" type="number" min="0" max="100" value="${state.draft.gp}" oninput="draftSet('gp',this.value)" placeholder="30"></div>
+      <div><label>${t("f_margin")}</label><input id="pb_margin" type="number" min="0" max="100" value="${state.draft.margin}" oninput="draftSet('margin',this.value)" placeholder="20"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 130px 90px 40px;gap:10px;margin-bottom:6px;padding:0 2px">
+      <label style="margin:0">${t("l_ingredient")}</label>
+      <label style="margin:0">${t("f_qtyUsed")}</label>
+      <label style="margin:0;text-align:right">${lang==='th'?'ต้นทุน':'Cost'}</label>
+      <span></span>
+    </div>
+    <div id="lines">${state.draft.lines.map((ln,i)=>lineHTML(ln,i,map)).join("")}</div>
+    <div style="margin-top:6px">
+      <button class="ghost" onclick="addLine()" ${state.ingredients.length?"":"disabled"}>${t("addLine")}</button>
+    </div>
+    <div class="total-bar total-bar2">
+      <div class="tb-batch">
+        <span class="lbl">${t("running")}</span>
+        <span class="val-sm" id="draftTotal">฿${baht(draftCost(map))}</span>
+      </div>
+      <div class="tb-per">
+        <span class="lbl">${t("perPieceLabel")}</span>
+        <span class="val-big" id="draftPer">${draftPerPieceShort(map)}</span>
+      </div>
+    </div>
+    <div style="margin-top:16px">
+      <button class="btn btn-mint" onclick="saveProduct()" ${draftValid()?"":"disabled"}>${state.editingId?t("updateBtn"):t("save")}</button>
+      ${state.ingredients.length?"":`<span style="margin-left:10px;color:#E8A23C;font-size:.85rem">${t("addFirst")}</span>`}
+    </div>
+  </div>
+
+  <!-- SECTION D -->
+  <div class="card">
+    <div class="card-head"><div class="card-icon ic-d">📊</div><h2>${t("secD")}</h2></div>
+    <p class="card-desc">${t("secD_d")}</p>
+    <div class="table-wrap"><table>
+      <thead><tr>
+        <th>${t("th_prod")}</th><th style="text-align:center">${t("th_yield")}</th><th style="text-align:right">${t("th_cost")}</th><th style="text-align:right">${t("th_pack")}</th>
+        <th style="text-align:center">GP %</th><th style="text-align:center">${lang==='th'?'กำไร %':'Margin %'}</th>
+        <th style="text-align:right">${t("th_price")}</th><th style="text-align:right">${t("th_profit")}</th><th></th>
+      </tr></thead>
+      <tbody>${state.products.length?state.products.map(p=>{
+        const pcs=p.yieldCount>0?p.yieldCount:1;
+        const pack=p.packCost||0;
+        const ingPerPc=totalProductCost(p,map)/pcs;   // ต้นทุนวัตถุดิบต่อชิ้น
+        const cost=ingPerPc+pack;                       // ต้นทุนต่อชิ้นรวมบรรจุภัณฑ์
+        const price=suggestedPrice(cost,p.gpFeePercent,p.desiredMarginPercent);
+        const profit=netProfit(price,cost,p.gpFeePercent);
+        const broken=!isFinite(price);
+        return `<tr class="prow" onclick="editProduct('${p.id}')">
+          <td style="font-weight:600">${esc(p.name)}</td>
+          <td style="text-align:center">${pcs}</td>
+          <td class="num">฿${baht(ingPerPc)}</td>
+          <td class="num">฿${baht(pack)}</td>
+          <td style="text-align:center">${p.gpFeePercent}%</td>
+          <td style="text-align:center">${p.desiredMarginPercent}%</td>
+          <td class="num">${broken?`<span class="warn">${t("warn")}</span>`:`<span class="price">฿${baht(price)}</span>`}</td>
+          <td class="num">${broken?"—":`<span class="profit">฿${baht(profit)}</span>`}</td>
+          <td style="text-align:right"><button class="ghost" onclick="event.stopPropagation();removeProd('${p.id}')">${t("remove")}</button></td>
+        </tr>`;}).join(""):`<tr><td colspan="9" class="empty">${t("noProd")}</td></tr>`}</tbody>
+    </table></div>
+    ${state.products.length?`<p style="text-align:center;color:var(--ink-soft);font-size:.8rem;margin-top:10px">${t("editHint")}</p>`:""}
+  </div>
+
+  <!-- FOLLOW -->
+  <div class="follow">
+    <div style="margin-bottom:6px">${brandMark(56)}</div>
+    <h3>${t("followH")}</h3>
+    <p>${t("followP")}</p>
+    <div class="follow-links">
+      <a class="fl-page" href="${BRAND.pageUrl}" target="_blank" rel="noopener">${FB_ICON} ${esc(BRAND.pageName)}</a>
+      <a class="fl-tiktok" href="${BRAND.tiktokUrl}" target="_blank" rel="noopener">🎵 TikTok ${esc(BRAND.tiktokHandle)}</a>
+    </div>
+    <div style="margin-top:14px">
+      <button class="btn" onclick="shareApp()">${t("share")}</button>
+    </div>
+  </div>
+
+  <p class="formula-note">
+    ${lang==='th'?'ราคาแนะนำ = (ต้นทุน + ต้นทุน×กำไร%) ÷ (1 − GP%)':'Suggested = (Cost + Cost×Profit%) ÷ (1 − GP%)'}<br>
+    ${lang==='th'?'กำไรสุทธิ = ราคาขาย − ต้นทุน − (ราคาขาย × GP%)':'Net Profit = Price − Cost − (Price × GP%)'}
+  </p>
+
+  <!-- Follow popup (ต้องกดติดตามถึงจะปิด) -->
+  <div class="overlay" id="overlay">
+    <div class="popup">
+      <div class="pe">${brandMark(64)}</div>
+      <h3>${t("popTitle")}</h3>
+      <p>${t("popBody")}</p>
+      <div class="pbtns">
+        <a href="${BRAND.pageUrl}" target="_blank" rel="noopener" onclick="closePopup()">${FB_ICON} ${t("popFollow")}</a>
+        <a href="${BRAND.tiktokUrl}" target="_blank" rel="noopener" onclick="closePopup()" style="background:var(--ink)">🎵 TikTok ${esc(BRAND.tiktokHandle)}</a>
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>`;
+
+  // restore base-unit dropdown filtering after render
+  syncBaseUnit(true);
+  drawQR();
+}
+
+/* วาด QR จาก matrix ที่ฝังไว้ (ไม่ต้องพึ่งเน็ต) */
+function drawQR(){
+  const cv=document.getElementById("qrCanvas");
+  if(!cv||typeof QR_MATRIX==="undefined")return;
+  const ctx=cv.getContext("2d");
+  const n=QR_MATRIX.length, size=cv.width, pad=4;
+  const cell=(size-pad*2)/n;
+  ctx.fillStyle="#fff";ctx.fillRect(0,0,size,size);
+  ctx.fillStyle="#1C1B22";
+  for(let r=0;r<n;r++){
+    const row=QR_MATRIX[r];
+    for(let c=0;c<n;c++){
+      if(row[c]==="1")ctx.fillRect(Math.round(pad+c*cell),Math.round(pad+r*cell),Math.ceil(cell),Math.ceil(cell));
+    }
+  }
+}
+
+function lineHTML(ln,i,map){
+  const ing=map[ln.ingredientId];
+  const lc=ing?(Number(ln.quantityUsed||0)*costPerBaseUnit(ing)):0;
+  return `<div class="line">
+    <select onchange="lineSet(${i},'ingredientId',this.value)">
+      ${state.ingredients.map(x=>`<option value="${x.id}" ${x.id===ln.ingredientId?"selected":""}>${esc(ingName(x))}</option>`).join("")}
+    </select>
+    <div class="qty-wrap">
+      <input type="number" min="0" value="${ln.quantityUsed}" oninput="lineQty(${i},this.value)" placeholder="${t("qty")}">
+      <span>${ing?ing.baseUnit:""}</span>
+    </div>
+    <div class="lc" id="lc${i}">฿${baht(lc)}</div>
+    <button class="x" onclick="removeLine(${i})">✕</button>
+  </div>`;
+}
+
+/* =========================================================================
+ * ACTIONS
+ * ====================================================================== */
+function setLang(l){lang=l;render();}
+
+function syncBaseUnit(initOnly){
+  const pu=document.getElementById("ia_pu"),bu=document.getElementById("ia_bu");
+  if(!pu||!bu)return;
+  const dim=UNITS[pu.value].dim;
+  const opts=UKEYS.filter(k=>UNITS[k].dim===dim);
+  const cur=bu.value;
+  bu.innerHTML=opts.map(k=>`<option value="${k}">${tu(k)}</option>`).join("");
+  bu.value=opts.includes(cur)?cur:opts[opts.length-1];
+}
+
+function addIngredient(){
+  const name=document.getElementById("ia_name").value.trim();
+  const price=Number(document.getElementById("ia_price").value);
+  const qty=Number(document.getElementById("ia_qty").value);
+  if(!name||price<=0||qty<=0)return;
+  state.ingredients.push({id:uid(),nameKey:null,name,purchasePrice:price,purchaseQuantity:qty,
+    purchaseUnit:document.getElementById("ia_pu").value,baseUnit:document.getElementById("ia_bu").value});
+  save();render();
+}
+function removeIngredient(id){
+  state.ingredients=state.ingredients.filter(i=>i.id!==id);
+  state.products.forEach(p=>p.ingredients=p.ingredients.filter(l=>l.ingredientId!==id));
+  state.draft.lines=state.draft.lines.filter(l=>l.ingredientId!==id);
+  save();render();
+}
+
+function draftSet(k,v){state.draft[k]=v;}
+function draftCost(map){
+  return totalProductCost({ingredients:state.draft.lines
+    .filter(l=>l.ingredientId&&Number(l.quantityUsed)>0)
+    .map(l=>({ingredientId:l.ingredientId,quantityUsed:Number(l.quantityUsed)}))},map);
+}
+/* ต้นทุนต่อชิ้น = (ต้นทุนวัตถุดิบ ÷ จำนวนชิ้น) + ค่าบรรจุภัณฑ์ต่อชิ้น */
+function draftPieces(){const y=Number(state.draft.yield);return y>0?y:1;}
+function draftPackCost(){return Number(state.draft.pack)||0;}
+function draftPerPieceVal(map){return draftCost(map)/draftPieces()+draftPackCost();}
+function draftPerPiece(map){
+  const per=draftPerPieceVal(map);
+  if(draftCost(map)<=0&&draftPackCost()<=0)return "";
+  return (lang==='th'?"≈ ฿"+baht(per)+" /ชิ้น":"≈ ฿"+baht(per)+" /pc");
+}
+/* ต้นทุนต่อชิ้นแบบสั้น (ตัวเลขใหญ่ ใช้ในแถบสรุป) */
+function draftPerPieceShort(map){
+  if(draftCost(map)<=0&&draftPackCost()<=0)return "฿0.00";
+  return "฿"+baht(draftPerPieceVal(map));
+}
+/* อัปเดตยอดรวม + ต้นทุนต่อบรรทัด แบบไม่ render ใหม่ (กัน cursor กระเด้ง) */
+function updateDraftTotals(){
+  const map=byId();
+  state.draft.lines.forEach((ln,i)=>{
+    const ing=map[ln.ingredientId];
+    const lc=ing?(Number(ln.quantityUsed||0)*costPerBaseUnit(ing)):0;
+    const el=document.getElementById("lc"+i);if(el)el.textContent="฿"+baht(lc);
+  });
+  const tot=document.getElementById("draftTotal");if(tot)tot.textContent="฿"+baht(draftCost(map));
+  const per=document.getElementById("draftPer");if(per)per.textContent=draftPerPieceShort(map);
+  const sv=document.querySelector(".btn-mint");if(sv)sv.disabled=!draftValid();
+}
+function lineQty(i,v){state.draft.lines[i].quantityUsed=v;updateDraftTotals();}
+function draftYield(v){state.draft.yield=v;updateDraftTotals();}
+function draftPack(v){state.draft.pack=v;updateDraftTotals();}
+function draftValid(){return state.draft.name.trim()&&state.draft.lines.some(l=>Number(l.quantityUsed)>0);}
+function addLine(){if(!state.ingredients.length)return;state.draft.lines.push({ingredientId:state.ingredients[0].id,quantityUsed:""});render();}
+function lineSet(i,k,v){state.draft.lines[i][k]=v;render();}
+function removeLine(i){state.draft.lines.splice(i,1);render();}
+
+function saveProduct(){
+  if(!draftValid())return;
+  const data={
+    name:state.draft.name.trim(),
+    ingredients:state.draft.lines.filter(l=>Number(l.quantityUsed)>0).map(l=>({ingredientId:l.ingredientId,quantityUsed:Number(l.quantityUsed)})),
+    gpFeePercent:Number(state.draft.gp)||0,
+    desiredMarginPercent:Number(state.draft.margin)||0,
+    yieldCount:Number(state.draft.yield)>0?Number(state.draft.yield):1,
+    packCost:Number(state.draft.pack)||0,
+  };
+  if(state.editingId){
+    // โหมดแก้ไข — อัปเดตสินค้าเดิม
+    const p=state.products.find(x=>x.id===state.editingId);
+    if(p)Object.assign(p,data);
+    state.editingId=null;
+    state.draft={name:"",lines:[],gp:"",margin:"",yield:"",pack:""};
+    save();render();
+    return;
+  }
+  // โหมดเพิ่มใหม่
+  const isFirst=state.products.length===0;
+  state.products.push({id:uid(),...data});
+  state.draft={name:"",lines:[],gp:"",margin:"",yield:"",pack:""};
+  save();render();
+  if(isFirst && !localStorage.getItem("costcalc_followed")){
+    try{localStorage.setItem("costcalc_followed","1");}catch(e){}
+    setTimeout(()=>{const o=document.getElementById("overlay");if(o)o.classList.add("show");},400);
+  }
+}
+
+/* คลิกแถวสินค้า → โหลดสูตรกลับมาแก้ในฟอร์มด้านบน */
+function editProduct(id){
+  const p=state.products.find(x=>x.id===id);if(!p)return;
+  state.editingId=id;
+  state.draft={
+    name:p.name,
+    lines:p.ingredients.map(l=>({ingredientId:l.ingredientId,quantityUsed:String(l.quantityUsed)})),
+    gp:String(p.gpFeePercent),
+    margin:String(p.desiredMarginPercent),
+    yield:String(p.yieldCount||1),
+    pack:p.packCost?String(p.packCost):"",
+  };
+  render();
+  const c=document.getElementById("builderCard");if(c)c.scrollIntoView({behavior:"smooth",block:"start"});
+}
+function cancelEdit(){
+  state.editingId=null;
+  state.draft={name:"",lines:[],gp:"",margin:"",yield:"",pack:""};
+  render();
+}
+function closePopup(){const o=document.getElementById("overlay");if(o)o.classList.remove("show");}
+
+/* แชร์ให้เพื่อน — ใช้ Web Share API บนมือถือ ถ้าไม่มีก็ก๊อปลิงก์ */
+function shareApp(){
+  const text=t("shareText")+"\n"+BRAND.pageUrl;
+  if(navigator.share){
+    navigator.share({title:BRAND.pageName,text:t("shareText"),url:BRAND.pageUrl}).catch(()=>{});
+  }else{
+    const done=()=>showToast(t("shareCopied"));
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(done).catch(()=>fallbackCopy(text,done));
+    }else fallbackCopy(text,done);
+  }
+}
+function fallbackCopy(text,cb){
+  const ta=document.createElement("textarea");ta.value=text;ta.style.position="fixed";ta.style.opacity="0";
+  document.body.appendChild(ta);ta.select();
+  try{document.execCommand("copy");cb();}catch(e){}
+  document.body.removeChild(ta);
+}
+let toastTimer;
+function showToast(msg){
+  const el=document.getElementById("toast");if(!el)return;
+  el.textContent=msg;el.classList.add("show");
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove("show"),2600);
+}
+function updateProd(id,k,v){const p=state.products.find(x=>x.id===id);if(p){let n=Number(v)||0;if(k==="yieldCount")n=n>0?n:1;p[k]=n;save();render();}}
+function removeProd(id){state.products=state.products.filter(p=>p.id!==id);save();render();}
+
+/* init */
+load();render();
+</script>
+</body>
+</html>
