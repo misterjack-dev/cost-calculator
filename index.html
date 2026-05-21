@@ -9,37 +9,39 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   /* =====================================================================
-   * THEME: Modern · Clean · Soft  (สะอาดตา ทันสมัย สมยุค AI)
+   * THEME: Fresh · Clean  (เขียวสด · น้ำเงินเข้ม · แดงเน้น)
    * ================================================================== */
   :root{
-    --bg:#FBFAFC;
+    --bg:#F4F8F6;
     --paper:#FFFFFF;
-    --ink:#1C1B22;
-    --ink-soft:#6E6B7B;
-    --ink-faint:#A8A5B5;
-    --line:#EEECF3;
-    --line-mid:#E2DFEA;
-    --brand:#6D5BF6;          /* ม่วง-น้ำเงินสดใส */
-    --brand-2:#9B6BF6;
-    --brand-soft:#F1EEFE;
-    --accent:#FF5C8A;         /* ชมพูพีช สดใส */
-    --accent-soft:#FFEEF3;
-    --green:#15B886;
-    --green-soft:#E6F8F1;
+    --ink:#16261F;
+    --ink-soft:#5E6E68;
+    --ink-faint:#9DAAA4;
+    --line:#E8EFEB;
+    --line-mid:#D8E3DD;
+    --brand:#16C172;          /* เขียวสด (สีหลัก) */
+    --brand-2:#0FA85F;
+    --brand-soft:#E4F8EE;
+    --navy:#1B2C57;           /* น้ำเงินเข้ม (หัวข้อ) */
+    --navy-soft:#EAEEF6;
+    --accent:#E4022B;         /* แดง (เน้นราคา เข้ากับโลโก้) */
+    --accent-soft:#FFEDF0;
+    --green:#16C172;
+    --green-soft:#E4F8EE;
     --amber:#F5A524;
     --radius:20px;
     --radius-sm:13px;
     --radius-xs:10px;
-    --shadow:0 10px 30px -12px rgba(80,70,140,.22);
-    --shadow-sm:0 4px 16px -6px rgba(80,70,140,.16);
-    --shadow-hover:0 16px 38px -12px rgba(109,91,246,.34);
+    --shadow:0 10px 30px -12px rgba(27,44,87,.18);
+    --shadow-sm:0 4px 16px -6px rgba(27,44,87,.14);
+    --shadow-hover:0 16px 38px -12px rgba(22,193,114,.32);
   }
   *{box-sizing:border-box;margin:0;padding:0}
   body{
     font-family:'IBM Plex Sans Thai',sans-serif;color:var(--ink);
     background:
-      radial-gradient(900px 500px at 12% -5%, rgba(109,91,246,.10), transparent 60%),
-      radial-gradient(800px 500px at 100% 0%, rgba(255,92,138,.08), transparent 55%),
+      radial-gradient(900px 500px at 12% -5%, rgba(22,193,114,.10), transparent 60%),
+      radial-gradient(800px 500px at 100% 0%, rgba(27,44,87,.07), transparent 55%),
       var(--bg);
     min-height:100vh;padding:30px 16px 72px;line-height:1.6;-webkit-font-smoothing:antialiased;
   }
@@ -59,9 +61,9 @@
   }
   .logo-emoji img{width:100%;height:100%;object-fit:cover;display:block}
   .brand-name{font-family:'Archivo';font-weight:700;font-size:1rem;
-    background:linear-gradient(100deg,var(--brand),var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent}
+    background:linear-gradient(100deg,var(--brand),var(--navy));-webkit-background-clip:text;background-clip:text;color:transparent}
   h1{font-size:2.05rem;font-weight:800;line-height:1.1;
-    background:linear-gradient(100deg,var(--brand) 10%,var(--brand-2) 45%,var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent}
+    background:linear-gradient(100deg,var(--brand) 10%,var(--brand-2) 40%,var(--navy));-webkit-background-clip:text;background-clip:text;color:transparent}
   .subtitle{color:var(--ink-soft);font-size:.96rem;margin-top:9px}
 
   .lang-toggle{display:inline-flex;border-radius:50px;background:var(--paper);margin-top:18px;padding:4px;box-shadow:var(--shadow-sm);border:1px solid var(--line)}
@@ -69,7 +71,7 @@
     border:none;background:transparent;font-family:'Archivo';font-weight:700;border-radius:50px;
     padding:6px 18px;cursor:pointer;color:var(--ink-soft);font-size:.85rem;transition:.18s;
   }
-  .lang-toggle button.active{background:linear-gradient(100deg,var(--brand),var(--brand-2));color:#fff;box-shadow:0 4px 12px -3px rgba(109,91,246,.5)}
+  .lang-toggle button.active{background:linear-gradient(100deg,var(--brand),var(--brand-2));color:#fff;box-shadow:0 4px 12px -3px rgba(22,193,114,.5)}
 
   /* ---------- Cards ---------- */
   .card{
@@ -81,8 +83,8 @@
     width:44px;height:44px;border-radius:14px;flex-shrink:0;
     display:flex;align-items:center;justify-content:center;font-size:21px;
   }
-  .ic-a{background:var(--accent-soft)} .ic-b{background:var(--brand-soft)} .ic-d{background:var(--green-soft)}
-  h2{font-size:1.28rem;font-weight:700;color:#2D2A4A}
+  .ic-a{background:var(--navy-soft)} .ic-b{background:var(--brand-soft)} .ic-d{background:var(--green-soft)}
+  h2{font-size:1.28rem;font-weight:700;color:var(--navy)}
   .card-desc{color:var(--ink-soft);font-size:.89rem;margin-bottom:22px}
 
   /* ---------- Form ---------- */
@@ -113,12 +115,12 @@
   button.btn{
     font-family:'Archivo';font-weight:700;font-size:.92rem;cursor:pointer;
     padding:12px 24px;border:none;border-radius:var(--radius-xs);transition:.18s;color:#fff;
-    background:linear-gradient(100deg,var(--brand),var(--brand-2));box-shadow:0 8px 20px -7px rgba(109,91,246,.6);
+    background:linear-gradient(100deg,var(--brand),var(--brand-2));box-shadow:0 8px 20px -7px rgba(22,193,114,.6);
   }
-  button.btn:hover{transform:translateY(-2px);box-shadow:0 13px 26px -8px rgba(109,91,246,.7)}
+  button.btn:hover{transform:translateY(-2px);box-shadow:0 13px 26px -8px rgba(22,193,114,.7)}
   button.btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
-  button.btn-mint{background:linear-gradient(100deg,var(--green),#0EA372);box-shadow:0 8px 20px -7px rgba(21,184,134,.55)}
-  button.btn-mint:hover{box-shadow:0 13px 26px -8px rgba(21,184,134,.65)}
+  button.btn-mint{background:linear-gradient(100deg,var(--green),var(--brand-2));box-shadow:0 8px 20px -7px rgba(22,193,114,.55)}
+  button.btn-mint:hover{box-shadow:0 13px 26px -8px rgba(22,193,114,.65)}
   button.ghost{
     font-family:'IBM Plex Sans Thai';font-weight:600;font-size:.84rem;cursor:pointer;background:var(--paper);
     color:var(--ink-soft);border:1.5px solid var(--line-mid);border-radius:var(--radius-xs);padding:7px 14px;transition:.15s;
@@ -147,7 +149,7 @@
   .lc{text-align:right;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums}
 
   .total-bar{display:flex;justify-content:space-between;align-items:center;margin-top:18px;
-    background:linear-gradient(115deg,var(--brand),var(--brand-2) 55%,var(--accent));border-radius:var(--radius-sm);padding:18px 20px}
+    background:linear-gradient(115deg,var(--brand),var(--brand-2) 50%,var(--navy));border-radius:var(--radius-sm);padding:18px 20px}
   .total-bar .lbl{font-family:'IBM Plex Sans Thai';font-weight:600;color:rgba(255,255,255,.85);font-size:.85rem}
   .total-bar .val{font-family:'Archivo';font-weight:700;font-size:1.3rem;color:#fff}
   .total-bar2{flex-direction:column;align-items:stretch;gap:13px}
@@ -159,9 +161,9 @@
 
   /* ---------- Follow / footer ---------- */
   .follow{text-align:center;margin-top:32px;border-radius:var(--radius);padding:34px 28px;
-    background:linear-gradient(140deg,var(--brand-soft),var(--accent-soft));border:1px solid var(--line)}
+    background:linear-gradient(140deg,var(--brand-soft),var(--navy-soft));border:1px solid var(--line)}
   .follow h3{font-size:1.18rem;margin-bottom:8px;
-    background:linear-gradient(100deg,var(--brand),var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent;display:inline-block}
+    background:linear-gradient(100deg,var(--brand),var(--navy));-webkit-background-clip:text;background-clip:text;color:transparent;display:inline-block}
   .follow p{color:var(--ink-soft);font-size:.9rem;margin-bottom:18px}
   .follow-links{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
   .follow-links a{
@@ -169,7 +171,7 @@
     padding:11px 24px;border-radius:50px;transition:.18s;display:inline-flex;align-items:center;gap:7px;
   }
   .fl-tiktok{background:var(--ink);box-shadow:var(--shadow-sm)}
-  .fl-page{background:linear-gradient(100deg,var(--brand),var(--accent));box-shadow:0 8px 20px -7px rgba(109,91,246,.5)}
+  .fl-page{background:linear-gradient(100deg,var(--brand),var(--brand-2));box-shadow:0 8px 20px -7px rgba(22,193,114,.5)}
   .follow-links a:hover{transform:translateY(-3px)}
   .formula-note{text-align:center;color:var(--ink-faint);font-size:.78rem;margin-top:24px;line-height:1.9}
   .saved-tag{font-size:.74rem;color:var(--green);font-weight:700;margin-left:6px}
@@ -198,7 +200,7 @@
   @keyframes fade{from{opacity:0}to{opacity:1}}
   .popup{
     background:var(--paper);border-radius:var(--radius);padding:34px 28px;max-width:380px;width:100%;text-align:center;
-    box-shadow:0 30px 60px -15px rgba(80,70,140,.4);animation:pop .35s cubic-bezier(.18,.89,.32,1.28);
+    box-shadow:0 30px 60px -15px rgba(27,44,87,.4);animation:pop .35s cubic-bezier(.18,.89,.32,1.28);
   }
   @keyframes pop{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
   .popup .pe{font-size:2.8rem;margin-bottom:10px}
@@ -207,7 +209,7 @@
   .popup .pbtns{display:flex;gap:11px;flex-direction:column}
   .popup .pbtns a{
     font-family:'Archivo';font-weight:700;text-decoration:none;font-size:.93rem;color:#fff;
-    padding:13px;border-radius:var(--radius-xs);background:linear-gradient(100deg,var(--brand),var(--brand-2));box-shadow:0 8px 20px -7px rgba(109,91,246,.5);transition:.18s;
+    padding:13px;border-radius:var(--radius-xs);background:linear-gradient(100deg,var(--brand),var(--brand-2));box-shadow:0 8px 20px -7px rgba(22,193,114,.5);transition:.18s;
   }
   .popup .pbtns a:hover{transform:translateY(-2px)}
   .popup .pbtns button{
@@ -529,7 +531,7 @@ function drawQR(){
   const n=QR_MATRIX.length, size=cv.width, pad=4;
   const cell=(size-pad*2)/n;
   ctx.fillStyle="#fff";ctx.fillRect(0,0,size,size);
-  ctx.fillStyle="#1C1B22";
+  ctx.fillStyle="#1B2C57";
   for(let r=0;r<n;r++){
     const row=QR_MATRIX[r];
     for(let c=0;c<n;c++){
