@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cost Calculator by Jackbakeryman | เครื่องคำนวณต้นทุน & ราคาขาย</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Mali:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* =====================================================================
+   * BRAND CONFIG — แก้ชื่อเพจ/ลิงก์ของคุณตรงนี้จุดเดียว
+   * (โค้ดจะอ่านค่าจาก data-* ด้านล่างนี้ผ่าน JS)
+   * ================================================================== */
+
+  :root{
+    --cream:#FFF8F0;
+    --peach:#FFE3D8;
+    --pink:#FF9EB5;
+    --pink-deep:#FF6F91;
+    --mint:#9BE3C9;
+    --mint-deep:#4ECCA3;
+    --butter:#FFD98E;
+    --choco:#7A5C52;
+    --ink:#5A4A42;
+    --ink-soft:#8B7A70;
+    --line:#F1DFD3;
+    --white:#FFFFFF;
+    --shadow:0 6px 22px rgba(255,111,145,.12);
+    --shadow-sm:0 3px 10px rgba(122,92,82,.08);
+    --radius:22px;
+    --radius-sm:14px;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Mali',sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(circle at 12% 8%, rgba(255,217,142,.30), transparent 38%),
+      radial-gradient(circle at 88% 14%, rgba(155,227,201,.30), transparent 40%),
+      radial-gradient(circle at 50% 100%, rgba(255,158,181,.22), transparent 45%),
+      var(--cream);
+    min-height:100vh;
+    padding:24px 16px 60px;
+    line-height:1.6;
+  }
+  .wrap{max-width:1000px;margin:0 auto}
+  h1,h2,h3,.font-head{font-family:'Quicksand',sans-serif}
+
+  /* ---------- Header / brand ---------- */
+  header{text-align:center;margin-bottom:26px}
+  .logo-badge{
+    display:inline-flex;align-items:center;gap:10px;
+    background:var(--white);padding:8px 18px 8px 10px;border-radius:50px;
+    box-shadow:var(--shadow-sm);margin-bottom:16px;
+  }
+  .logo-emoji{
+    width:42px;height:42px;border-radius:50%;
+    background:linear-gradient(135deg,var(--pink),var(--butter));
+    display:flex;align-items:center;justify-content:center;font-size:22px;
+  }
+  .brand-name{font-family:'Quicksand';font-weight:700;font-size:1.05rem;color:var(--pink-deep)}
+  h1{font-size:1.9rem;font-weight:700;color:var(--choco);letter-spacing:.3px}
+  .subtitle{color:var(--ink-soft);font-size:.95rem;margin-top:6px}
+
+  .lang-toggle{
+    display:inline-flex;border-radius:50px;overflow:hidden;
+    border:2px solid var(--peach);margin-top:16px;background:var(--white);
+  }
+  .lang-toggle button{
+    border:none;background:transparent;font-family:'Quicksand';font-weight:600;
+    padding:7px 18px;cursor:pointer;color:var(--ink-soft);font-size:.9rem;transition:.2s;
+  }
+  .lang-toggle button.active{background:var(--pink-deep);color:#fff}
+
+  /* ---------- Cards ---------- */
+  .card{
+    background:var(--white);border-radius:var(--radius);padding:24px;
+    box-shadow:var(--shadow);margin-bottom:22px;border:1px solid var(--line);
+    position:relative;overflow:hidden;
+  }
+  .card::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:5px;
+    background:linear-gradient(90deg,var(--pink),var(--butter),var(--mint));
+  }
+  .card-head{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+  .card-icon{
+    width:38px;height:38px;border-radius:12px;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;font-size:20px;
+  }
+  .ic-a{background:var(--peach)} .ic-b{background:#D8F3E9} .ic-d{background:#FFF0CE}
+  h2{font-size:1.2rem;font-weight:700;color:var(--choco)}
+  .card-desc{color:var(--ink-soft);font-size:.88rem;margin-bottom:18px}
+
+  /* ---------- Form ---------- */
+  label{display:block;font-family:'Quicksand';font-weight:600;font-size:.82rem;color:var(--ink);margin-bottom:5px}
+  input,select{
+    width:100%;font-family:'Mali';font-size:.92rem;color:var(--ink);
+    padding:10px 12px;border:2px solid var(--line);border-radius:var(--radius-sm);
+    background:var(--cream);transition:.2s;outline:none;
+  }
+  input:focus,select:focus{border-color:var(--pink);background:#fff;box-shadow:0 0 0 4px rgba(255,158,181,.18)}
+  input::placeholder{color:#C9B8AE}
+
+  .grid{display:grid;gap:14px}
+  .form-a{grid-template-columns:1.6fr 1fr 1fr 1.3fr 1.3fr auto;align-items:end}
+  .form-bc{grid-template-columns:1.6fr 1fr 1fr 1fr;margin-bottom:18px}
+  .form-bc5{grid-template-columns:1.5fr 1fr 1fr 1fr 1fr;margin-bottom:18px}
+  @media(max-width:760px){.form-bc5{grid-template-columns:1fr 1fr}}
+  @media(max-width:480px){.form-bc5{grid-template-columns:1fr}}
+  .edit-banner{display:flex;align-items:center;gap:8px;background:#FFF0CE;border:1px solid var(--butter);
+    border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:16px;font-family:'Quicksand';font-weight:600;font-size:.88rem;color:var(--choco)}
+  .prow{cursor:pointer}
+  .prow:hover{background:var(--peach)!important}
+  @media(max-width:760px){.form-a,.form-bc{grid-template-columns:1fr 1fr}}
+  @media(max-width:480px){.form-a,.form-bc{grid-template-columns:1fr}}
+
+  button.btn{
+    font-family:'Quicksand';font-weight:700;font-size:.92rem;cursor:pointer;
+    padding:11px 22px;border:none;border-radius:var(--radius-sm);transition:.18s;color:#fff;
+    background:linear-gradient(135deg,var(--pink-deep),var(--pink));box-shadow:0 4px 12px rgba(255,111,145,.32);
+  }
+  button.btn:hover{transform:translateY(-2px);box-shadow:0 7px 16px rgba(255,111,145,.4)}
+  button.btn:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+  button.btn-mint{background:linear-gradient(135deg,var(--mint-deep),var(--mint));box-shadow:0 4px 12px rgba(78,204,163,.3)}
+  button.ghost{
+    font-family:'Quicksand';font-weight:600;font-size:.82rem;cursor:pointer;background:#fff;
+    color:var(--ink-soft);border:2px solid var(--line);border-radius:10px;padding:6px 12px;transition:.15s;
+  }
+  button.ghost:hover{border-color:var(--pink);color:var(--pink-deep)}
+  button.x{background:var(--peach);border:none;border-radius:10px;width:34px;height:34px;cursor:pointer;color:var(--pink-deep);font-weight:700;font-size:1rem}
+  button.x:hover{background:var(--pink);color:#fff}
+
+  /* ---------- Tables ---------- */
+  .table-wrap{overflow-x:auto;margin-top:8px}
+  table{width:100%;border-collapse:collapse;font-size:.9rem}
+  th{font-family:'Quicksand';font-weight:700;color:var(--ink-soft);text-align:left;padding:10px 12px;font-size:.8rem;text-transform:uppercase;letter-spacing:.4px}
+  td{padding:11px 12px;border-top:1px solid var(--line)}
+  tbody tr{transition:.12s}
+  tbody tr:hover{background:var(--cream)}
+  .num{font-variant-numeric:tabular-nums;text-align:right;font-weight:600}
+  .pill{display:inline-block;background:var(--peach);color:var(--choco);border-radius:50px;padding:2px 10px;font-size:.78rem;font-weight:600}
+  .mini-input{width:62px;padding:6px 8px;text-align:center;font-weight:700;border-radius:9px}
+  .empty{text-align:center;color:#C9B8AE;padding:26px;font-style:italic}
+  .price{color:var(--pink-deep);font-weight:700}
+  .profit{color:var(--mint-deep);font-weight:700}
+  .warn{color:#E8607D;font-size:.78rem;font-weight:600}
+
+  /* ---------- Recipe lines ---------- */
+  .line{display:grid;grid-template-columns:1fr 130px 90px 40px;gap:10px;align-items:center;margin-bottom:9px}
+  @media(max-width:480px){.line{grid-template-columns:1fr 1fr;}.line .lc{grid-column:1/-1;text-align:left}}
+  .qty-wrap{position:relative}
+  .qty-wrap span{position:absolute;right:11px;top:50%;transform:translateY(-50%);font-size:.74rem;color:var(--ink-soft);pointer-events:none}
+  .lc{text-align:right;font-weight:700;color:var(--choco);font-variant-numeric:tabular-nums}
+
+  .total-bar{display:flex;justify-content:space-between;align-items:center;margin-top:16px;
+    background:var(--cream);border-radius:var(--radius-sm);padding:12px 16px}
+  .total-bar .lbl{font-family:'Quicksand';font-weight:600;color:var(--ink-soft);font-size:.88rem}
+  .total-bar .val{font-family:'Quicksand';font-weight:700;font-size:1.3rem;color:var(--pink-deep)}
+  .total-bar2{flex-direction:column;align-items:stretch;gap:10px}
+  .total-bar2 .tb-batch{display:flex;justify-content:space-between;align-items:center;padding-bottom:9px;border-bottom:1px dashed var(--line)}
+  .total-bar2 .val-sm{font-family:'Quicksand';font-weight:700;font-size:1rem;color:var(--ink-soft)}
+  .total-bar2 .tb-per{display:flex;justify-content:space-between;align-items:center}
+  .total-bar2 .tb-per .lbl{font-size:.95rem;color:var(--choco);font-weight:700}
+  .total-bar2 .val-big{font-family:'Quicksand';font-weight:700;font-size:2rem;color:var(--pink-deep);line-height:1}
+
+  /* ---------- Follow / footer ---------- */
+  .follow{
+    text-align:center;margin-top:30px;background:var(--white);border-radius:var(--radius);
+    padding:26px;box-shadow:var(--shadow-sm);border:1px solid var(--line);
+  }
+  .follow h3{font-size:1.1rem;color:var(--choco);margin-bottom:6px}
+  .follow p{color:var(--ink-soft);font-size:.88rem;margin-bottom:14px}
+  .follow-links{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .follow-links a{
+    font-family:'Quicksand';font-weight:700;text-decoration:none;font-size:.9rem;color:#fff;
+    padding:10px 22px;border-radius:50px;transition:.18s;display:inline-flex;align-items:center;gap:7px;
+  }
+  .fl-tiktok{background:linear-gradient(135deg,#5A4A42,#2c2420)}
+  .fl-page{background:linear-gradient(135deg,var(--pink-deep),var(--pink))}
+  .follow-links a:hover{transform:translateY(-2px)}
+  .formula-note{text-align:center;color:#C9B8AE;font-size:.78rem;margin-top:22px;line-height:1.8}
+  .saved-tag{font-size:.74rem;color:var(--mint-deep);font-weight:600;margin-left:6px}
+
+  /* ---------- QR in header ---------- */
+  .qr-box{
+    display:inline-flex;flex-direction:column;align-items:center;gap:6px;
+    background:var(--white);padding:12px 14px;border-radius:var(--radius-sm);
+    box-shadow:var(--shadow-sm);border:1px solid var(--line);margin-top:16px;
+  }
+  .qr-box canvas{border-radius:8px;display:block}
+  .qr-box .cap{font-family:'Quicksand';font-weight:600;font-size:.74rem;color:var(--ink-soft)}
+  .head-row{display:flex;gap:18px;justify-content:center;align-items:center;flex-wrap:wrap}
+
+  /* ---------- Share toast ---------- */
+  .toast{
+    position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);
+    background:var(--choco);color:#fff;padding:13px 22px;border-radius:50px;
+    font-family:'Quicksand';font-weight:600;font-size:.9rem;box-shadow:0 8px 24px rgba(0,0,0,.2);
+    opacity:0;pointer-events:none;transition:.3s;z-index:200;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  /* ---------- Follow popup ---------- */
+  .overlay{
+    position:fixed;inset:0;background:rgba(122,92,82,.45);backdrop-filter:blur(3px);
+    display:none;align-items:center;justify-content:center;z-index:300;padding:20px;
+  }
+  .overlay.show{display:flex;animation:fade .25s ease}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  .popup{
+    background:var(--white);border-radius:var(--radius);padding:30px 26px;max-width:380px;
+    width:100%;text-align:center;box-shadow:0 20px 50px rgba(255,111,145,.3);
+    animation:pop .35s cubic-bezier(.18,.89,.32,1.28);
+  }
+  @keyframes pop{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
+  .popup .pe{font-size:2.6rem;margin-bottom:8px}
+  .popup h3{font-size:1.15rem;color:var(--choco);margin-bottom:10px}
+  .popup p{color:var(--ink-soft);font-size:.9rem;margin-bottom:20px}
+  .popup .pbtns{display:flex;gap:10px;flex-direction:column}
+  .popup .pbtns a{
+    font-family:'Quicksand';font-weight:700;text-decoration:none;font-size:.95rem;color:#fff;
+    padding:12px;border-radius:var(--radius-sm);background:linear-gradient(135deg,var(--pink-deep),var(--pink));
+    box-shadow:0 4px 12px rgba(255,111,145,.32);transition:.18s;
+  }
+  .popup .pbtns a:hover{transform:translateY(-2px)}
+  .popup .pbtns button{
+    font-family:'Quicksand';font-weight:600;font-size:.85rem;background:none;border:none;
+    color:var(--ink-soft);cursor:pointer;padding:6px;text-decoration:underline;
+  }
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+
+<script>
+/* =========================================================================
+ * BRAND CONFIG — ★ แก้ของคุณตรงนี้จุดเดียว ★
+ * ====================================================================== */
+const BRAND = {
+  pageName: "พี่แจ็ค เบเกอรี่แมน",                      // ชื่อเพจ
+  emoji: "🧁",                                          // อิโมจิโลโก้
+  pageUrl: "https://facebook.com/Mr.JackBakeryCoffee", // ลิงก์เพจ
+  tiktokUrl: "https://www.tiktok.com/@jackbakeryman",  // ลิงก์ TikTok
+  tiktokHandle: "@jackbakeryman",
+};
+
+/* QR matrix ของลิงก์เพจ (สร้างไว้ล่วงหน้า ไม่ต้องพึ่งเน็ต) */
+const QR_MATRIX=["11111110110001100100001111111", "10000010110100001111001000001", "10111010110111000011101011101", "10111010010101011111101011101", "10111010111000101010001011101", "10000010001001100000101000001", "11111110101010101010101111111", "00000000010001110010000000000", "10011111110000111000010010111", "10011000010010100111100110110", "11101010110010011010010010100", "00111000110110101110100011001", "11010110100110000000101100001", "01110100011111111010001111111", "11011110001011111011100100101", "10000001111100011001010010101", "00001110101010111001100101000", "10001100001001010111100010110", "11100010100100010011000011001", "11111001001110101000111011100", "11001010000101111101111111110", "00000000101110110110100011000", "11111110111010111011101011000", "10000010101010111101100010001", "10111010100001101101111111010", "10111010100111011011010000001", "10111010011111010110110110111", "10000010000110101010000001101", "11111110111011010000101010000"];
+
+/* =========================================================================
+ * i18n — ข้อความ 2 ภาษา
+ * ====================================================================== */
+const STR = {
+  appTitle:{th:"เครื่องคำนวณต้นทุน & ราคาขาย",en:"Cost & Price Calculator"},
+  subtitle:{th:"คำนวณต้นทุนวัตถุดิบ ตั้งราคาขาย และดูกำไรสุทธิ แบบง่าย ๆ",en:"Calculate ingredient cost, set prices, and see net profit easily"},
+  secA:{th:"ตั้งค่าวัตถุดิบ",en:"Ingredient Setup"},
+  secA_d:{th:"เพิ่มวัตถุดิบที่ซื้อมา ระบบจะคิดต้นทุนต่อหน่วยย่อยให้อัตโนมัติ",en:"Add raw materials; cost per base unit is computed automatically."},
+  secB:{th:"สร้างสูตรสินค้า + ตั้งกำไร",en:"Build Product + Margin"},
+  secB_d:{th:"เลือกวัตถุดิบใส่ในสูตร แล้วกำหนดค่า GP และกำไรที่อยากได้",en:"Pick ingredients, then set GP fee and desired margin."},
+  secD:{th:"สรุปราคาขาย & กำไร",en:"Price & Profit Summary"},
+  secD_d:{th:"ราคาขายและกำไรคำนวณต่อชิ้นให้อัตโนมัติ คลิกที่แถวเพื่อแก้ไขสูตร",en:"Price & profit per piece, auto-calculated. Click a row to edit."},
+  f_name:{th:"ชื่อวัตถุดิบ",en:"Name"},
+  f_price:{th:"ราคาที่ซื้อ (฿)",en:"Price (฿)"},
+  f_qty:{th:"ปริมาณ",en:"Qty"},
+  f_pUnit:{th:"หน่วยที่ซื้อ",en:"Bought in"},
+  f_bUnit:{th:"หน่วยในสูตร",en:"Recipe unit"},
+  add:{th:"เพิ่ม",en:"Add"},
+  th_ing:{th:"วัตถุดิบ",en:"Ingredient"},
+  th_buy:{th:"ที่ซื้อ",en:"Purchase"},
+  th_cpu:{th:"ต้นทุน/หน่วย",en:"Cost/unit"},
+  noIng:{th:"ยังไม่มีวัตถุดิบ ลองเพิ่มดูสิ! 🍓",en:"No ingredients yet 🍓"},
+  remove:{th:"ลบ",en:"Remove"},
+  f_pName:{th:"ชื่อสินค้า",en:"Product name"},
+  f_gp:{th:"ค่า GP %",en:"GP fee %"},
+  f_margin:{th:"กำไรที่ต้องการ % (ของต้นทุน)",en:"Profit % (of cost)"},
+  f_yield:{th:"จำนวนชิ้นต่อสูตร",en:"Pieces per batch"},
+  f_pack:{th:"ค่าบรรจุภัณฑ์/ชิ้น (฿)",en:"Packaging/pc (฿)"},
+  perPieceLabel:{th:"ต้นทุน/ชิ้น (รวมแพ็คเกจจิ้ง)",en:"Cost/pc (incl. packaging)"},
+  f_qtyUsed:{th:"จำนวนที่ใช้",en:"Qty used"},
+  th_pack:{th:"บรรจุภัณฑ์/ชิ้น",en:"Pack/pc"},
+  editHint:{th:"💡 คลิกที่แถวสินค้าเพื่อแก้ไขสูตร",en:"💡 Click a row to edit"},
+  editing:{th:"✏️ กำลังแก้ไข:",en:"✏️ Editing:"},
+  updateBtn:{th:"💾 อัปเดตสินค้า",en:"💾 Update product"},
+  cancelEdit:{th:"ยกเลิก",en:"Cancel"},
+  l_ingredient:{th:"วัตถุดิบ",en:"Ingredient"},
+  addLine:{th:"+ เพิ่มวัตถุดิบในสูตร",en:"+ Add ingredient"},
+  running:{th:"ต้นทุนรวมตอนนี้",en:"Running total"},
+  save:{th:"💾 บันทึกสินค้า",en:"💾 Save product"},
+  addFirst:{th:"เพิ่มวัตถุดิบในส่วนแรกก่อนนะ",en:"Add ingredients first"},
+  qty:{th:"จำนวน",en:"Qty"},
+  th_prod:{th:"สินค้า",en:"Product"},
+  th_cost:{th:"ต้นทุน/ชิ้น",en:"Cost/pc"},
+  th_price:{th:"💰 ราคาแนะนำให้ขาย/ชิ้น",en:"💰 Suggested price/pc"},
+  th_profit:{th:"กำไร/ชิ้น",en:"Profit/pc"},
+  th_yield:{th:"ชิ้น/สูตร",en:"Pcs"},
+  noProd:{th:"ยังไม่มีสินค้า สร้างสูตรแรกกันเลย! 🎂",en:"No products yet 🎂"},
+  warn:{th:"GP ≥ 100%",en:"GP ≥ 100%"},
+  followH:{th:"ถ้าชอบเครื่องมือนี้ ฝากติดตามด้วยนะครับ 💕",en:"Like this tool? Follow us 💕"},
+  followP:{th:"มีสูตร เทคนิค และของแจกฟรีอีกเพียบ!",en:"More recipes, tips & freebies!"},
+  saved:{th:"บันทึกอัตโนมัติ ✓",en:"Auto-saved ✓"},
+  scanFollow:{th:"สแกนติดตามเพจ",en:"Scan to follow"},
+  share:{th:"📤 แชร์ให้เพื่อน",en:"📤 Share with friends"},
+  shareCopied:{th:"คัดลอกลิงก์แล้ว! เอาไปวางส่งเพื่อนได้เลย 💕",en:"Link copied! Paste & share 💕"},
+  shareText:{th:"เจอเครื่องคำนวณต้นทุน-ราคาขายฟรีจากเพจ พี่แจ็ค เบเกอรี่แมน ลองใช้ดูสิ 🧁",en:"Free cost & pricing calculator from พี่แจ็ค เบเกอรี่แมน — try it! 🧁"},
+  popTitle:{th:"เก่งมาก! บันทึกสินค้าชิ้นแรกแล้ว 🎉",en:"Nice! First product saved 🎉"},
+  popBody:{th:"ถ้าเครื่องมือนี้มีประโยชน์ ฝากกดติดตามพี่แจ็คด้วยนะครับ มีสูตรและทริคต้นทุนอีกเพียบ!",en:"If this helped, follow พี่แจ็ค for more recipes & cost tips!"},
+  popFollow:{th:"ติดตามเลย",en:"Follow now"},
+  popLater:{th:"ไว้ทีหลัง",en:"Maybe later"},
+  s_flour:{th:"แป้งสาลี",en:"Wheat Flour"},
+  s_sugar:{th:"น้ำตาล",en:"Sugar"},
+  s_butter:{th:"เนย",en:"Butter"},
+};
+const UNIT_LABELS={
+  kg:{th:"กิโลกรัม (kg)",en:"Kilogram (kg)"},g:{th:"กรัม (g)",en:"Gram (g)"},
+  l:{th:"ลิตร (L)",en:"Liter (L)"},ml:{th:"มิลลิลิตร (ml)",en:"Milliliter (ml)"},
+  piece:{th:"ชิ้น (pc)",en:"Piece (pc)"},
+};
+const UNITS={kg:{dim:"mass",f:1000},g:{dim:"mass",f:1},l:{dim:"vol",f:1000},ml:{dim:"vol",f:1},piece:{dim:"count",f:1}};
+const UKEYS=Object.keys(UNITS);
+
+/* =========================================================================
+ * CALCULATION LOGIC — pure functions
+ * ====================================================================== */
+function convert(amt,from,to){const a=UNITS[from],b=UNITS[to];if(!a||!b||a.dim!==b.dim)return null;return amt*a.f/b.f;}
+function costPerBaseUnit(ing){
+  if(!ing.purchaseQuantity||ing.purchaseQuantity<=0)return 0;
+  const q=convert(ing.purchaseQuantity,ing.purchaseUnit,ing.baseUnit)??ing.purchaseQuantity;
+  return q>0?ing.purchasePrice/q:0;
+}
+function totalProductCost(prod,byId){
+  return prod.ingredients.reduce((s,l)=>{const ing=byId[l.ingredientId];return ing?s+l.quantityUsed*costPerBaseUnit(ing):s;},0);
+}
+/* กำไร% คิดจาก "ต้นทุน" (แบบแม่ค้า): กำไรที่อยากได้ = ต้นทุน × กำไร%
+ * GP เป็นค่าธรรมเนียมแพลตฟอร์มที่หักจากราคาขาย
+ * ราคาขาย = (ต้นทุน + กำไรที่อยากได้) ÷ (1 − GP%)  */
+function suggestedPrice(cost,gp,margin){
+  const d=1-gp/100;
+  if(d<=0)return Infinity;            // GP ≥ 100% ขายไม่ได้
+  return (cost+cost*margin/100)/d;
+}
+/* กำไรสุทธิต่อชิ้น = ราคาขาย − ต้นทุน − ค่า GP (ควรเท่ากับ ต้นทุน × กำไร%) */
+function netProfit(price,cost,gp){return!isFinite(price)?Infinity:price-cost-price*(gp/100);}
+
+/* =========================================================================
+ * STATE + PERSISTENCE (localStorage — ข้อมูลเก็บในเครื่องผู้ใช้)
+ * ====================================================================== */
+const KEY="costcalc_v1";
+const uid=()=>Math.random().toString(36).slice(2,10);
+let lang="th";
+let state={
+  ingredients:[
+    {id:uid(),nameKey:"s_flour",name:"",purchasePrice:100,purchaseQuantity:1,purchaseUnit:"kg",baseUnit:"g"},
+    {id:uid(),nameKey:"s_sugar",name:"",purchasePrice:45,purchaseQuantity:1,purchaseUnit:"kg",baseUnit:"g"},
+    {id:uid(),nameKey:"s_butter",name:"",purchasePrice:180,purchaseQuantity:1,purchaseUnit:"kg",baseUnit:"g"},
+  ],
+  products:[],
+  draft:{name:"",lines:[],gp:"",margin:"",yield:"",pack:""},
+  editingId:null,
+};
+function load(){try{const r=localStorage.getItem(KEY);if(r){const d=JSON.parse(r);state.ingredients=d.ingredients||state.ingredients;state.products=(d.products||[]).map(p=>({yieldCount:1,packCost:0,...p}));}}catch(e){}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify({ingredients:state.ingredients,products:state.products}));}catch(e){}}
+
+/* helpers */
+const t=k=>STR[k]?STR[k][lang]:k;
+const tu=k=>UNIT_LABELS[k]?UNIT_LABELS[k][lang]:k;
+const ingName=ing=>ing.nameKey?t(ing.nameKey):(ing.name||"");
+const baht=n=>isFinite(n)?new Intl.NumberFormat("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}).format(n):"—";
+const byId=()=>Object.fromEntries(state.ingredients.map(i=>[i.id,i]));
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* =========================================================================
+ * RENDER
+ * ====================================================================== */
+function render(){
+  const map=byId();
+  document.getElementById("app").innerHTML=`
+  <header>
+    <div class="logo-badge">
+      <div class="logo-emoji">${BRAND.emoji}</div>
+      <div class="brand-name">${esc(BRAND.pageName)}</div>
+    </div>
+    <h1>${t("appTitle")}</h1>
+    <p class="subtitle">${t("subtitle")}<span class="saved-tag">${t("saved")}</span></p>
+    <div class="lang-toggle">
+      <button class="${lang==="th"?"active":""}" onclick="setLang('th')">ไทย</button>
+      <button class="${lang==="en"?"active":""}" onclick="setLang('en')">EN</button>
+    </div>
+    <div class="head-row">
+      <a class="qr-box" href="${BRAND.pageUrl}" target="_blank" rel="noopener" style="text-decoration:none">
+        <canvas id="qrCanvas" width="116" height="116"></canvas>
+        <span class="cap">${t("scanFollow")} ${BRAND.emoji}</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- SECTION A -->
+  <div class="card">
+    <div class="card-head"><div class="card-icon ic-a">🍓</div><h2>${t("secA")}</h2></div>
+    <p class="card-desc">${t("secA_d")}</p>
+    <div class="grid form-a">
+      <div><label>${t("f_name")}</label><input id="ia_name" placeholder="${lang==='th'?'เช่น แป้งเค้ก':'e.g. Cake Flour'}"></div>
+      <div><label>${t("f_price")}</label><input id="ia_price" type="number" min="0" placeholder="100"></div>
+      <div><label>${t("f_qty")}</label><input id="ia_qty" type="number" min="0" placeholder="1"></div>
+      <div><label>${t("f_pUnit")}</label><select id="ia_pu" onchange="syncBaseUnit()">${UKEYS.map(k=>`<option value="${k}">${tu(k)}</option>`).join("")}</select></div>
+      <div><label>${t("f_bUnit")}</label><select id="ia_bu">${UKEYS.map(k=>`<option value="${k}">${tu(k)}</option>`).join("")}</select></div>
+      <div><button class="btn" onclick="addIngredient()">${t("add")}</button></div>
+    </div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>${t("th_ing")}</th><th>${t("th_buy")}</th><th style="text-align:right">${t("th_cpu")}</th><th></th></tr></thead>
+      <tbody>${state.ingredients.length?state.ingredients.map(ing=>`
+        <tr>
+          <td style="font-weight:600">${esc(ingName(ing))}</td>
+          <td style="color:var(--ink-soft)">฿${baht(ing.purchasePrice)} / ${ing.purchaseQuantity} ${ing.purchaseUnit}</td>
+          <td class="num">฿${baht(costPerBaseUnit(ing))} <span style="color:#C9B8AE;font-weight:400">/ ${ing.baseUnit}</span></td>
+          <td style="text-align:right"><button class="ghost" onclick="removeIngredient('${ing.id}')">${t("remove")}</button></td>
+        </tr>`).join(""):`<tr><td colspan="4" class="empty">${t("noIng")}</td></tr>`}</tbody>
+    </table></div>
+  </div>
+
+  <!-- SECTION B & C -->
+  <div class="card" id="builderCard">
+    <div class="card-head"><div class="card-icon ic-b">🧁</div><h2>${t("secB")}</h2></div>
+    <p class="card-desc">${t("secB_d")}</p>
+    ${state.editingId?`<div class="edit-banner">${t("editing")} <b>${esc(state.draft.name)}</b><button class="ghost" onclick="cancelEdit()" style="margin-left:auto">${t("cancelEdit")}</button></div>`:""}
+    <div class="grid form-bc5">
+      <div><label>${t("f_pName")}</label><input id="pb_name" value="${esc(state.draft.name)}" oninput="draftSet('name',this.value)" placeholder="${lang==='th'?'เช่น คุกกี้เนยสด':'e.g. Butter Cookie'}"></div>
+      <div><label>${t("f_yield")} 🍪</label><input id="pb_yield" type="number" min="1" value="${state.draft.yield}" oninput="draftYield(this.value)" placeholder="${lang==='th'?'เช่น 12':'e.g. 12'}"></div>
+      <div><label>${t("f_pack")} 📦</label><input id="pb_pack" type="number" min="0" value="${state.draft.pack}" oninput="draftPack(this.value)" placeholder="0"></div>
+      <div><label>${t("f_gp")}</label><input id="pb_gp" type="number" min="0" max="100" value="${state.draft.gp}" oninput="draftSet('gp',this.value)" placeholder="30"></div>
+      <div><label>${t("f_margin")}</label><input id="pb_margin" type="number" min="0" max="100" value="${state.draft.margin}" oninput="draftSet('margin',this.value)" placeholder="20"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 130px 90px 40px;gap:10px;margin-bottom:6px;padding:0 2px">
+      <label style="margin:0">${t("l_ingredient")}</label>
+      <label style="margin:0">${t("f_qtyUsed")}</label>
+      <label style="margin:0;text-align:right">${lang==='th'?'ต้นทุน':'Cost'}</label>
+      <span></span>
+    </div>
+    <div id="lines">${state.draft.lines.map((ln,i)=>lineHTML(ln,i,map)).join("")}</div>
+    <div style="margin-top:6px">
+      <button class="ghost" onclick="addLine()" ${state.ingredients.length?"":"disabled"}>${t("addLine")}</button>
+    </div>
+    <div class="total-bar total-bar2">
+      <div class="tb-batch">
+        <span class="lbl">${t("running")}</span>
+        <span class="val-sm" id="draftTotal">฿${baht(draftCost(map))}</span>
+      </div>
+      <div class="tb-per">
+        <span class="lbl">${t("perPieceLabel")}</span>
+        <span class="val-big" id="draftPer">${draftPerPieceShort(map)}</span>
+      </div>
+    </div>
+    <div style="margin-top:16px">
+      <button class="btn btn-mint" onclick="saveProduct()" ${draftValid()?"":"disabled"}>${state.editingId?t("updateBtn"):t("save")}</button>
+      ${state.ingredients.length?"":`<span style="margin-left:10px;color:#E8A23C;font-size:.85rem">${t("addFirst")}</span>`}
+    </div>
+  </div>
+
+  <!-- SECTION D -->
+  <div class="card">
+    <div class="card-head"><div class="card-icon ic-d">📊</div><h2>${t("secD")}</h2></div>
+    <p class="card-desc">${t("secD_d")}</p>
+    <div class="table-wrap"><table>
+      <thead><tr>
+        <th>${t("th_prod")}</th><th style="text-align:center">${t("th_yield")}</th><th style="text-align:right">${t("th_cost")}</th><th style="text-align:right">${t("th_pack")}</th>
+        <th style="text-align:center">GP %</th><th style="text-align:center">${lang==='th'?'กำไร %':'Margin %'}</th>
+        <th style="text-align:right">${t("th_price")}</th><th style="text-align:right">${t("th_profit")}</th><th></th>
+      </tr></thead>
+      <tbody>${state.products.length?state.products.map(p=>{
+        const pcs=p.yieldCount>0?p.yieldCount:1;
+        const pack=p.packCost||0;
+        const ingPerPc=totalProductCost(p,map)/pcs;   // ต้นทุนวัตถุดิบต่อชิ้น
+        const cost=ingPerPc+pack;                       // ต้นทุนต่อชิ้นรวมบรรจุภัณฑ์
+        const price=suggestedPrice(cost,p.gpFeePercent,p.desiredMarginPercent);
+        const profit=netProfit(price,cost,p.gpFeePercent);
+        const broken=!isFinite(price);
+        return `<tr class="prow" onclick="editProduct('${p.id}')">
+          <td style="font-weight:600">${esc(p.name)}</td>
+          <td style="text-align:center">${pcs}</td>
+          <td class="num">฿${baht(ingPerPc)}</td>
+          <td class="num">฿${baht(pack)}</td>
+          <td style="text-align:center">${p.gpFeePercent}%</td>
+          <td style="text-align:center">${p.desiredMarginPercent}%</td>
+          <td class="num">${broken?`<span class="warn">${t("warn")}</span>`:`<span class="price">฿${baht(price)}</span>`}</td>
+          <td class="num">${broken?"—":`<span class="profit">฿${baht(profit)}</span>`}</td>
+          <td style="text-align:right"><button class="ghost" onclick="event.stopPropagation();removeProd('${p.id}')">${t("remove")}</button></td>
+        </tr>`;}).join(""):`<tr><td colspan="9" class="empty">${t("noProd")}</td></tr>`}</tbody>
+    </table></div>
+    ${state.products.length?`<p style="text-align:center;color:var(--ink-soft);font-size:.8rem;margin-top:10px">${t("editHint")}</p>`:""}
+  </div>
+
+  <!-- FOLLOW -->
+  <div class="follow">
+    <div style="font-size:1.8rem">${BRAND.emoji}</div>
+    <h3>${t("followH")}</h3>
+    <p>${t("followP")}</p>
+    <div class="follow-links">
+      <a class="fl-page" href="${BRAND.pageUrl}" target="_blank" rel="noopener">📘 ${esc(BRAND.pageName)}</a>
+      <a class="fl-tiktok" href="${BRAND.tiktokUrl}" target="_blank" rel="noopener">🎵 TikTok ${esc(BRAND.tiktokHandle)}</a>
+    </div>
+    <div style="margin-top:14px">
+      <button class="btn" onclick="shareApp()">${t("share")}</button>
+    </div>
+  </div>
+
+  <p class="formula-note">
+    ${lang==='th'?'ราคาแนะนำ = (ต้นทุน + ต้นทุน×กำไร%) ÷ (1 − GP%)':'Suggested = (Cost + Cost×Profit%) ÷ (1 − GP%)'}<br>
+    ${lang==='th'?'กำไรสุทธิ = ราคาขาย − ต้นทุน − (ราคาขาย × GP%)':'Net Profit = Price − Cost − (Price × GP%)'}
+  </p>
+
+  <!-- Follow popup (ต้องกดติดตามถึงจะปิด) -->
+  <div class="overlay" id="overlay">
+    <div class="popup">
+      <div class="pe">${BRAND.emoji}</div>
+      <h3>${t("popTitle")}</h3>
+      <p>${t("popBody")}</p>
+      <div class="pbtns">
+        <a href="${BRAND.pageUrl}" target="_blank" rel="noopener" onclick="closePopup()">📘 ${t("popFollow")}</a>
+        <a href="${BRAND.tiktokUrl}" target="_blank" rel="noopener" onclick="closePopup()" style="background:linear-gradient(135deg,#5A4A42,#2c2420)">🎵 TikTok ${esc(BRAND.tiktokHandle)}</a>
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>`;
+
+  // restore base-unit dropdown filtering after render
+  syncBaseUnit(true);
+  drawQR();
+}
+
+/* วาด QR จาก matrix ที่ฝังไว้ (ไม่ต้องพึ่งเน็ต) */
+function drawQR(){
+  const cv=document.getElementById("qrCanvas");
+  if(!cv||typeof QR_MATRIX==="undefined")return;
+  const ctx=cv.getContext("2d");
+  const n=QR_MATRIX.length, size=cv.width, pad=4;
+  const cell=(size-pad*2)/n;
+  ctx.fillStyle="#fff";ctx.fillRect(0,0,size,size);
+  ctx.fillStyle="#5A4A42";
+  for(let r=0;r<n;r++){
+    const row=QR_MATRIX[r];
+    for(let c=0;c<n;c++){
+      if(row[c]==="1")ctx.fillRect(Math.round(pad+c*cell),Math.round(pad+r*cell),Math.ceil(cell),Math.ceil(cell));
+    }
+  }
+}
+
+function lineHTML(ln,i,map){
+  const ing=map[ln.ingredientId];
+  const lc=ing?(Number(ln.quantityUsed||0)*costPerBaseUnit(ing)):0;
+  return `<div class="line">
+    <select onchange="lineSet(${i},'ingredientId',this.value)">
+      ${state.ingredients.map(x=>`<option value="${x.id}" ${x.id===ln.ingredientId?"selected":""}>${esc(ingName(x))}</option>`).join("")}
+    </select>
+    <div class="qty-wrap">
+      <input type="number" min="0" value="${ln.quantityUsed}" oninput="lineQty(${i},this.value)" placeholder="${t("qty")}">
+      <span>${ing?ing.baseUnit:""}</span>
+    </div>
+    <div class="lc" id="lc${i}">฿${baht(lc)}</div>
+    <button class="x" onclick="removeLine(${i})">✕</button>
+  </div>`;
+}
+
+/* =========================================================================
+ * ACTIONS
+ * ====================================================================== */
+function setLang(l){lang=l;render();}
+
+function syncBaseUnit(initOnly){
+  const pu=document.getElementById("ia_pu"),bu=document.getElementById("ia_bu");
+  if(!pu||!bu)return;
+  const dim=UNITS[pu.value].dim;
+  const opts=UKEYS.filter(k=>UNITS[k].dim===dim);
+  const cur=bu.value;
+  bu.innerHTML=opts.map(k=>`<option value="${k}">${tu(k)}</option>`).join("");
+  bu.value=opts.includes(cur)?cur:opts[opts.length-1];
+}
+
+function addIngredient(){
+  const name=document.getElementById("ia_name").value.trim();
+  const price=Number(document.getElementById("ia_price").value);
+  const qty=Number(document.getElementById("ia_qty").value);
+  if(!name||price<=0||qty<=0)return;
+  state.ingredients.push({id:uid(),nameKey:null,name,purchasePrice:price,purchaseQuantity:qty,
+    purchaseUnit:document.getElementById("ia_pu").value,baseUnit:document.getElementById("ia_bu").value});
+  save();render();
+}
+function removeIngredient(id){
+  state.ingredients=state.ingredients.filter(i=>i.id!==id);
+  state.products.forEach(p=>p.ingredients=p.ingredients.filter(l=>l.ingredientId!==id));
+  state.draft.lines=state.draft.lines.filter(l=>l.ingredientId!==id);
+  save();render();
+}
+
+function draftSet(k,v){state.draft[k]=v;}
+function draftCost(map){
+  return totalProductCost({ingredients:state.draft.lines
+    .filter(l=>l.ingredientId&&Number(l.quantityUsed)>0)
+    .map(l=>({ingredientId:l.ingredientId,quantityUsed:Number(l.quantityUsed)}))},map);
+}
+/* ต้นทุนต่อชิ้น = (ต้นทุนวัตถุดิบ ÷ จำนวนชิ้น) + ค่าบรรจุภัณฑ์ต่อชิ้น */
+function draftPieces(){const y=Number(state.draft.yield);return y>0?y:1;}
+function draftPackCost(){return Number(state.draft.pack)||0;}
+function draftPerPieceVal(map){return draftCost(map)/draftPieces()+draftPackCost();}
+function draftPerPiece(map){
+  const per=draftPerPieceVal(map);
+  if(draftCost(map)<=0&&draftPackCost()<=0)return "";
+  return (lang==='th'?"≈ ฿"+baht(per)+" /ชิ้น":"≈ ฿"+baht(per)+" /pc");
+}
+/* ต้นทุนต่อชิ้นแบบสั้น (ตัวเลขใหญ่ ใช้ในแถบสรุป) */
+function draftPerPieceShort(map){
+  if(draftCost(map)<=0&&draftPackCost()<=0)return "฿0.00";
+  return "฿"+baht(draftPerPieceVal(map));
+}
+/* อัปเดตยอดรวม + ต้นทุนต่อบรรทัด แบบไม่ render ใหม่ (กัน cursor กระเด้ง) */
+function updateDraftTotals(){
+  const map=byId();
+  state.draft.lines.forEach((ln,i)=>{
+    const ing=map[ln.ingredientId];
+    const lc=ing?(Number(ln.quantityUsed||0)*costPerBaseUnit(ing)):0;
+    const el=document.getElementById("lc"+i);if(el)el.textContent="฿"+baht(lc);
+  });
+  const tot=document.getElementById("draftTotal");if(tot)tot.textContent="฿"+baht(draftCost(map));
+  const per=document.getElementById("draftPer");if(per)per.textContent=draftPerPieceShort(map);
+  const sv=document.querySelector(".btn-mint");if(sv)sv.disabled=!draftValid();
+}
+function lineQty(i,v){state.draft.lines[i].quantityUsed=v;updateDraftTotals();}
+function draftYield(v){state.draft.yield=v;updateDraftTotals();}
+function draftPack(v){state.draft.pack=v;updateDraftTotals();}
+function draftValid(){return state.draft.name.trim()&&state.draft.lines.some(l=>Number(l.quantityUsed)>0);}
+function addLine(){if(!state.ingredients.length)return;state.draft.lines.push({ingredientId:state.ingredients[0].id,quantityUsed:""});render();}
+function lineSet(i,k,v){state.draft.lines[i][k]=v;render();}
+function removeLine(i){state.draft.lines.splice(i,1);render();}
+
+function saveProduct(){
+  if(!draftValid())return;
+  const data={
+    name:state.draft.name.trim(),
+    ingredients:state.draft.lines.filter(l=>Number(l.quantityUsed)>0).map(l=>({ingredientId:l.ingredientId,quantityUsed:Number(l.quantityUsed)})),
+    gpFeePercent:Number(state.draft.gp)||0,
+    desiredMarginPercent:Number(state.draft.margin)||0,
+    yieldCount:Number(state.draft.yield)>0?Number(state.draft.yield):1,
+    packCost:Number(state.draft.pack)||0,
+  };
+  if(state.editingId){
+    // โหมดแก้ไข — อัปเดตสินค้าเดิม
+    const p=state.products.find(x=>x.id===state.editingId);
+    if(p)Object.assign(p,data);
+    state.editingId=null;
+    state.draft={name:"",lines:[],gp:"",margin:"",yield:"",pack:""};
+    save();render();
+    return;
+  }
+  // โหมดเพิ่มใหม่
+  const isFirst=state.products.length===0;
+  state.products.push({id:uid(),...data});
+  state.draft={name:"",lines:[],gp:"",margin:"",yield:"",pack:""};
+  save();render();
+  if(isFirst && !localStorage.getItem("costcalc_followed")){
+    try{localStorage.setItem("costcalc_followed","1");}catch(e){}
+    setTimeout(()=>{const o=document.getElementById("overlay");if(o)o.classList.add("show");},400);
+  }
+}
+
+/* คลิกแถวสินค้า → โหลดสูตรกลับมาแก้ในฟอร์มด้านบน */
+function editProduct(id){
+  const p=state.products.find(x=>x.id===id);if(!p)return;
+  state.editingId=id;
+  state.draft={
+    name:p.name,
+    lines:p.ingredients.map(l=>({ingredientId:l.ingredientId,quantityUsed:String(l.quantityUsed)})),
+    gp:String(p.gpFeePercent),
+    margin:String(p.desiredMarginPercent),
+    yield:String(p.yieldCount||1),
+    pack:p.packCost?String(p.packCost):"",
+  };
+  render();
+  const c=document.getElementById("builderCard");if(c)c.scrollIntoView({behavior:"smooth",block:"start"});
+}
+function cancelEdit(){
+  state.editingId=null;
+  state.draft={name:"",lines:[],gp:"",margin:"",yield:"",pack:""};
+  render();
+}
+function closePopup(){const o=document.getElementById("overlay");if(o)o.classList.remove("show");}
+
+/* แชร์ให้เพื่อน — ใช้ Web Share API บนมือถือ ถ้าไม่มีก็ก๊อปลิงก์ */
+function shareApp(){
+  const text=t("shareText")+"\n"+BRAND.pageUrl;
+  if(navigator.share){
+    navigator.share({title:BRAND.pageName,text:t("shareText"),url:BRAND.pageUrl}).catch(()=>{});
+  }else{
+    const done=()=>showToast(t("shareCopied"));
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(done).catch(()=>fallbackCopy(text,done));
+    }else fallbackCopy(text,done);
+  }
+}
+function fallbackCopy(text,cb){
+  const ta=document.createElement("textarea");ta.value=text;ta.style.position="fixed";ta.style.opacity="0";
+  document.body.appendChild(ta);ta.select();
+  try{document.execCommand("copy");cb();}catch(e){}
+  document.body.removeChild(ta);
+}
+let toastTimer;
+function showToast(msg){
+  const el=document.getElementById("toast");if(!el)return;
+  el.textContent=msg;el.classList.add("show");
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove("show"),2600);
+}
+function updateProd(id,k,v){const p=state.products.find(x=>x.id===id);if(p){let n=Number(v)||0;if(k==="yieldCount")n=n>0?n:1;p[k]=n;save();render();}}
+function removeProd(id){state.products=state.products.filter(p=>p.id!==id);save();render();}
+
+/* init */
+load();render();
+</script>
+</body>
+</html>
