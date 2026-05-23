@@ -254,6 +254,9 @@
 <body>
 <div class="wrap" id="app"></div>
 
+<!-- ★ ระบบ login + นับโควต้า (กันโกง) — แทรกก่อน script หลัก -->
+<script src="auth-quota.js"></script>
+
 <script>
 /* =========================================================================
  * BRAND CONFIG — ★ แก้ของคุณตรงนี้จุดเดียว ★
@@ -757,7 +760,7 @@ function addLine(){if(!state.ingredients.length)return;state.draft.lines.push({i
 function lineSet(i,k,v){state.draft.lines[i][k]=v;render();}
 function removeLine(i){state.draft.lines.splice(i,1);render();}
 
-function saveProduct(){
+async function saveProduct(){
   if(!draftValid())return;
   const data={
     name:state.draft.name.trim(),
@@ -776,10 +779,17 @@ function saveProduct(){
     save();render();
     return;
   }
-  // โหมดเพิ่มใหม่ — เช็คลิมิตเวอร์ชันฟรีก่อน
-  if(state.products.length>=BRAND.freeLimit){
-    showUpgrade();
-    return;
+  // โหมดเพิ่มใหม่ — เช็คโควต้าจาก backend ก่อน (กันโกง)
+  if(!BRAND.isPremium){
+    if(window.JackAuth && JackAuth.ready){
+      const allowed = await JackAuth.consumeQuota();
+      // อัปเดตสถานะ premium ให้ตรงกับ backend (เผื่อเพิ่งจ่ายเงิน)
+      if(JackAuth.isPremium) BRAND.isPremium=true;
+      if(!allowed){ showUpgrade(); return; }
+    } else {
+      // fallback: ถ้า backend ยังไม่พร้อม ใช้ลิมิตเดิมกันพลาด
+      if(state.products.length>=BRAND.freeLimit){ showUpgrade(); return; }
+    }
   }
   const isFirst=state.products.length===0;
   state.products.push({id:uid(),...data});
@@ -921,6 +931,15 @@ function removeProd(id){state.products=state.products.filter(p=>p.id!==id);save(
 
 /* init */
 load();render();
+
+/* ★ เมื่อระบบ login + โควต้าพร้อม: ดึงสถานะจริงจาก backend มาแทนค่าใน config */
+window.onJackAuthReady=function(){
+  if(window.JackAuth){
+    if(JackAuth.isPremium) BRAND.isPremium=true;       // จ่ายแล้ว = ปลดล็อกเต็ม
+    if(JackAuth.status && JackAuth.status.limit) BRAND.freeLimit=JackAuth.status.limit;
+  }
+  render();   // วาดใหม่ด้วยสถานะจริง
+};
 </script>
 </body>
 </html>
