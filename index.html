@@ -199,13 +199,17 @@
     background:linear-gradient(100deg,var(--brand),var(--navy));-webkit-background-clip:text;background-clip:text;color:transparent;display:inline-block}
   .follow p{color:var(--ink-soft);font-size:.9rem;margin-bottom:18px}
   .follow-links{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .fl-line-big{display:block;width:100%;box-sizing:border-box;margin-bottom:14px;padding:16px;border-radius:var(--radius-xs);background:#06C755;color:#fff;font-family:'IBM Plex Sans Thai';font-weight:700;font-size:1.02rem;text-decoration:none;box-shadow:0 10px 24px -8px rgba(6,199,85,.6);transition:.18s}
+  .fl-line-big:hover{transform:translateY(-2px);box-shadow:0 14px 30px -8px rgba(6,199,85,.7)}
   .follow-links a{
     font-family:'Archivo';font-weight:700;text-decoration:none;font-size:.88rem;color:#fff;
     padding:11px 24px;border-radius:50px;transition:.18s;display:inline-flex;align-items:center;gap:7px;
   }
   .fl-tiktok{background:var(--ink);box-shadow:var(--shadow-sm)}
-  .fl-page{background:linear-gradient(100deg,var(--brand),var(--brand-2));box-shadow:0 8px 20px -7px rgba(22,193,114,.5)}
+  .fl-page{background:#1877F2;box-shadow:0 8px 20px -7px rgba(24,119,242,.5)}
   .follow-links a:hover{transform:translateY(-3px)}
+  button.btn.fl-share{background:#6B4FBB;box-shadow:0 8px 20px -7px rgba(107,79,187,.5)}
+  button.btn.fl-share:hover{box-shadow:0 13px 26px -8px rgba(107,79,187,.65)}
   .formula-note{text-align:center;color:var(--ink-faint);font-size:.78rem;margin-top:24px;line-height:1.9}
   .saved-tag{font-size:.74rem;color:var(--green);font-weight:700;margin-left:6px}
 
@@ -228,9 +232,9 @@
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
   /* ---------- Follow popup ---------- */
-  .overlay{position:fixed;top:0;left:0;right:0;bottom:0;width:100%;height:100%;background:rgba(28,27,34,.5);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:none;z-index:300;padding:20px;overflow-y:auto}
-  .overlay.show{display:flex;align-items:center;justify-content:center;animation:fade .25s ease}
-  .overlay .popup{margin:auto}
+  .overlay{position:fixed;top:0;left:0;right:0;bottom:0;width:100vw;height:100vh;background:rgba(28,27,34,.5);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:none;z-index:300}
+  .overlay.show{display:block;animation:fade .25s ease}
+  .overlay .popup{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:calc(100% - 40px);max-width:380px}
   @keyframes fade{from{opacity:0}to{opacity:1}}
   .popup{
     background:var(--paper);border-radius:var(--radius);padding:34px 28px;max-width:380px;width:100%;text-align:center;
@@ -337,6 +341,7 @@ const STR = {
   th_yield:{th:"ชิ้น/สูตร",en:"Pcs"},
   noProd:{th:"ยังไม่มีสินค้า สร้างสูตรแรกกันเลย! 🎂",en:"No products yet 🎂"},
   warn:{th:"GP ≥ 100%",en:"GP ≥ 100%"},
+  followLine:{th:"💬 ทักไลน์ พี่แจ็ค เบเกอรี่แมน เพื่อปลดล็อก",en:"💬 Message พี่แจ็ค เบเกอรี่แมน to unlock"},
   followH:{th:"ถ้าชอบเครื่องมือนี้ ฝากติดตามด้วยนะครับ 💕",en:"Like this tool? Follow us 💕"},
   followP:{th:"มีสูตร เทคนิค และของแจกฟรีอีกเพียบ!",en:"More recipes, tips & freebies!"},
   saved:{th:"บันทึกอัตโนมัติ ✓",en:"Auto-saved ✓"},
@@ -351,7 +356,7 @@ const STR = {
   upTitle:{th:"ปลดล็อกเวอร์ชันเต็ม 🔓",en:"Unlock Full Version 🔓"},
   upBody:{th:"เวอร์ชันฟรีบันทึกได้สูงสุด {n} รายการ อยากบันทึกไม่จำกัด + ได้ฟีเจอร์พิเศษ + E-book + เข้ากลุ่มปิด ทักไลน์มาเลยครับ",en:"Free version saves up to {n} items. Want unlimited + premium features + E-book + private group? Message us!"},
   upPrice:{th:"เพียง {p} บาท (ก่อนปรับเป็นราคาปกติ {r}) · จ่ายครั้งเดียว ใช้ตลอด",en:"Only ฿{p} (regular ฿{r}) · One-time payment"},
-  upLine:{th:"💬 ทักไลน์ {id} เพื่อปลดล็อก",en:"💬 Message {id} to unlock"},
+  upLine:{th:"💬 ทักไลน์ พี่แจ็ค เบเกอรี่แมน เพื่อปลดล็อก",en:"💬 Message พี่แจ็ค เบเกอรี่แมน to unlock"},
   upClose:{th:"ใช้เวอร์ชันฟรีต่อ",en:"Keep using free"},
   lockTag:{th:"🔒 เวอร์ชันเต็ม",en:"🔒 Premium"},
   featExport:{th:"ส่งออกตารางราคาเป็น PDF/รูป",en:"Export price table as PDF/image"},
@@ -610,12 +615,13 @@ function render(){
     <div style="margin-bottom:6px">${brandMark(56)}</div>
     <h3>${t("followH")}</h3>
     <p>${t("followP")}</p>
+    <a class="fl-line-big" href="${BRAND.lineUrl}" target="_blank" rel="noopener">${t("followLine")}</a>
     <div class="follow-links">
       <a class="fl-page" href="${BRAND.pageUrl}" target="_blank" rel="noopener">${FB_ICON} ${esc(BRAND.pageName)}</a>
       <a class="fl-tiktok" href="${BRAND.tiktokUrl}" target="_blank" rel="noopener">🎵 TikTok ${esc(BRAND.tiktokHandle)}</a>
     </div>
     <div style="margin-top:14px">
-      <button class="btn" onclick="shareApp()">${t("share")}</button>
+      <button class="btn fl-share" onclick="shareApp()">${t("share")}</button>
     </div>
   </div>
 
@@ -645,7 +651,7 @@ function render(){
       <p>${t("upBody").replace("{n}",BRAND.freeLimit)}</p>
       <div class="up-price">${t("upPrice").replace("{p}",BRAND.premiumPrice).replace("{r}",BRAND.regularPrice)}</div>
       <div class="pbtns">
-        <a href="${BRAND.lineUrl}" target="_blank" rel="noopener" onclick="closeUpgrade()" style="background:#06C755">${t("upLine").replace("{id}",BRAND.lineId)}</a>
+        <a href="${BRAND.lineUrl}" target="_blank" rel="noopener" onclick="closeUpgrade()" style="background:#06C755">${t("upLine")}</a>
         <button onclick="closeUpgrade()">${t("upClose")}</button>
       </div>
     </div>
