@@ -109,6 +109,10 @@
   .unlock-btn{width:100%;background:linear-gradient(100deg,var(--accent),#FF4D6D)!important;box-shadow:0 8px 20px -7px rgba(228,2,43,.5)!important}
   .unlock-btn:hover{box-shadow:0 13px 26px -8px rgba(228,2,43,.6)!important}
   .up-price{font-family:'Archivo';font-weight:700;font-size:1.15rem;color:var(--accent);margin-bottom:20px}
+  .up-code-label{font-size:.82rem;color:var(--ink-soft);margin-bottom:6px}
+  .up-code{display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer;background:#F1EFE8;border:2px dashed #C9C4B5;border-radius:var(--radius-xs);padding:12px;margin-bottom:18px;font-family:'Archivo',monospace;font-weight:700;font-size:1.3rem;letter-spacing:3px;color:var(--ink);transition:.15s}
+  .up-code:hover{background:#E8E4D8}
+  .up-code-ic{font-size:1rem}
   h2{font-size:1.28rem;font-weight:700;color:var(--navy)}
   .card-desc{color:var(--ink-soft);font-size:.89rem;margin-bottom:22px}
 
@@ -357,6 +361,8 @@ const STR = {
   upBody:{th:"เวอร์ชันฟรีบันทึกได้สูงสุด {n} รายการ อยากบันทึกไม่จำกัด + ได้ฟีเจอร์พิเศษ + E-book + เข้ากลุ่มปิด ทักไลน์มาเลยครับ",en:"Free version saves up to {n} items. Want unlimited + premium features + E-book + private group? Message us!"},
   upPrice:{th:"เพียง {p} บาท (ก่อนปรับเป็นราคาปกติ {r}) · จ่ายครั้งเดียว ใช้ตลอด",en:"Only ฿{p} (regular ฿{r}) · One-time payment"},
   upLine:{th:"💬 ทักไลน์ พี่แจ็ค เบเกอรี่แมน เพื่อปลดล็อก",en:"💬 Message พี่แจ็ค เบเกอรี่แมน to unlock"},
+  upCode:{th:"รหัสลูกค้าของคุณ (ส่งมาพร้อมสลิป)",en:"Your customer code (send with payment slip)"},
+  upCodeCopied:{th:"คัดลอกรหัสแล้ว!",en:"Code copied!"},
   upClose:{th:"ใช้เวอร์ชันฟรีต่อ",en:"Keep using free"},
   lockTag:{th:"🔒 เวอร์ชันเต็ม",en:"🔒 Premium"},
   featExport:{th:"ส่งออกตารางราคาเป็น PDF/รูป",en:"Export price table as PDF/image"},
@@ -650,6 +656,11 @@ function render(){
       <h3>${t("upTitle")}</h3>
       <p>${t("upBody").replace("{n}",BRAND.freeLimit)}</p>
       <div class="up-price">${t("upPrice").replace("{p}",BRAND.premiumPrice).replace("{r}",BRAND.regularPrice)}</div>
+      <div class="up-code-label">${t("upCode")}</div>
+      <div class="up-code" onclick="copyCustomerCode()" title="แตะเพื่อคัดลอก">
+        <span id="custCode">${(window.JackAuth&&JackAuth.customerCode)||"--------"}</span>
+        <span class="up-code-ic">📋</span>
+      </div>
       <div class="pbtns">
         <a href="${BRAND.lineUrl}" target="_blank" rel="noopener" onclick="closeUpgrade()" style="background:#06C755">${t("upLine")}</a>
         <button onclick="closeUpgrade()">${t("upClose")}</button>
@@ -809,8 +820,18 @@ async function saveProduct(){
 }
 
 /* เด้งป๊อปอัปชวนอัปเกรด */
-function showUpgrade(){const o=document.getElementById("upOverlay");if(o)o.classList.add("show");}
+function showUpgrade(){
+  const o=document.getElementById("upOverlay");if(o)o.classList.add("show");
+  // อัปเดตรหัสลูกค้าล่าสุด (เผื่อโหลดมาทีหลัง)
+  const c=document.getElementById("custCode");
+  if(c&&window.JackAuth&&JackAuth.customerCode)c.textContent=JackAuth.customerCode;
+}
 function closeUpgrade(){const o=document.getElementById("upOverlay");if(o)o.classList.remove("show");}
+function copyCustomerCode(){
+  const code=(window.JackAuth&&JackAuth.customerCode)||"";
+  if(!code)return;
+  navigator.clipboard.writeText(code).then(function(){showToast(t("upCodeCopied"));}).catch(function(){});
+}
 
 /* ★ ฟีเจอร์เวอร์ชันเต็ม: ส่งออกตารางราคาขายเป็น PDF / รูป */
 function exportPDF(){
