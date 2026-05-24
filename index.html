@@ -228,8 +228,9 @@
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
   /* ---------- Follow popup ---------- */
-  .overlay{position:fixed;inset:0;background:rgba(28,27,34,.5);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:300;padding:20px}
-  .overlay.show{display:flex;animation:fade .25s ease}
+  .overlay{position:fixed;top:0;left:0;right:0;bottom:0;width:100%;height:100%;background:rgba(28,27,34,.5);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:none;z-index:300;padding:20px;overflow-y:auto}
+  .overlay.show{display:flex;align-items:center;justify-content:center;animation:fade .25s ease}
+  .overlay .popup{margin:auto}
   @keyframes fade{from{opacity:0}to{opacity:1}}
   .popup{
     background:var(--paper);border-radius:var(--radius);padding:34px 28px;max-width:380px;width:100%;text-align:center;
@@ -268,8 +269,8 @@ const BRAND = {
   pageUrl: "https://facebook.com/Mr.JackBakeryCoffee", // ลิงก์เพจ
   tiktokUrl: "https://www.tiktok.com/@jackbakeryman",  // ลิงก์ TikTok
   tiktokHandle: "@jackbakeryman",
-  lineUrl: "https://line.me/R/ti/p/@mrjackcafe",       // ★ ลิงก์ LINE OA (ปุ่มอัปเกรด/รับสูตร)
-  lineId: "@mrjackcafe",
+  lineUrl: "https://line.me/R/ti/p/@899djfkw",       // ★ ลิงก์ LINE OA (ปุ่มอัปเกรด/รับสูตร)
+  lineId: "@899djfkw",
   freeLimit: 15,                                        // ★ บันทึกได้สูงสุดในเวอร์ชันฟรี
   isPremium: false,                                     // ★ false=ไฟล์ฟรี / true=ไฟล์ตัวเต็ม (ส่งให้ลูกค้าที่จ่ายเงิน)
   premiumPrice: 299,                                    // ★ ราคาแพ็กเกจเต็ม (บาท)
