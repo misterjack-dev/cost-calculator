@@ -10,10 +10,10 @@
 
   // ---- ค่าตั้งต้น (แก้ตรงนี้จุดเดียว) --------------------------------------
   var CONFIG = {
-    SUPABASE_URL: 'https://YOUR_PROJECT.supabase.co',
-    SUPABASE_ANON_KEY: 'YOUR_ANON_KEY',
-    FUNCTIONS_URL: 'https://YOUR_PROJECT.supabase.co/functions/v1',
-    LIFF_ID: 'YOUR_LIFF_ID',
+    SUPABASE_URL: 'https://bzemksxqdmnagvzcuske.supabase.co',
+    SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZW1rc3hxZG1uYWd2emN1c2tlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk1NTU1MTAsImV4cCI6MjA5NTEzMTUxMH0.TGx9KAws-fIIKodmTuHSpdAhA0wUgrEGZk192NVkLOI',
+    FUNCTIONS_URL: 'https://bzemksxqdmnagvzcuske.supabase.co/functions/v1',
+    LIFF_ID: '2010175680-yOgHGY8L',
   };
 
   // global object ที่โค้ดเดิมจะเรียกใช้
